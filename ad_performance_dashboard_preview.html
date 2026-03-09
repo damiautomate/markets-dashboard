@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ad Performance Dashboard — Layout Preview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #09090B;
+    --surface: #141417;
+    --surface-raised: #1C1C20;
+    --border: #27272A;
+    --border-light: #1F1F23;
+    --text-primary: #FAFAFA;
+    --text-secondary: #A1A1AA;
+    --text-muted: #71717A;
+    --accent-blue: #60A5FA;
+    --accent-teal: #2DD4BF;
+    --emerald: #34D399;
+    --emerald-dim: rgba(52,211,153,0.12);
+    --coral: #F87171;
+    --coral-dim: rgba(248,113,113,0.12);
+    --amber: #FBBF24;
+    --amber-dim: rgba(251,191,36,0.12);
+    --blue-dim: rgba(96,165,250,0.12);
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    font-family: 'Sora', sans-serif;
+    background: var(--bg);
+    color: var(--text-primary);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+    position: relative;
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    opacity: 0.022;
+    pointer-events: none;
+    z-index: 9999;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  /* HEADER */
+  .dash-header {
+    background: rgba(20,20,23,0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+    padding: 18px 44px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    animation: fadeIn 0.4s ease;
+  }
+  .header-left h1 {
+    font-family: 'Fraunces', serif;
+    font-size: 21px;
+    font-weight: 600;
+    letter-spacing: -0.3px;
+    color: var(--text-primary);
+    font-optical-sizing: auto;
+  }
+  .header-left .header-sub {
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-muted);
+    margin-bottom: 2px;
+  }
+  .badge-preview {
+    background: var(--blue-dim);
+    color: var(--accent-blue);
+    font-size: 10px;
+    font-weight: 600;
+    padding: 5px 12px;
+    border-radius: 20px;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    border: 1px solid rgba(96,165,250,0.2);
+  }
+
+  /* FILTERS */
+  .filters-bar {
+    padding: 14px 44px;
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    border-bottom: 1px solid var(--border-light);
+    animation: fadeIn 0.5s ease 0.1s both;
+  }
+  .filter-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .filter-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  select {
+    font-family: 'Sora', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 7px 28px 7px 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    color: var(--text-primary);
+    cursor: pointer;
+    outline: none;
+    transition: all 0.2s;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2371717A' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+  }
+  select:hover { border-color: var(--accent-blue); }
+  select:focus { border-color: var(--accent-blue); box-shadow: 0 0 0 3px rgba(96,165,250,0.15); }
+  .filter-divider {
+    width: 1px;
+    height: 24px;
+    background: var(--border);
+    margin: 0 4px;
+  }
+
+  /* MAIN */
+  .dash-main {
+    padding: 28px 44px 80px;
+    max-width: 1440px;
+    margin: 0 auto;
+  }
+
+  /* SECTION HEADERS */
+  .section-header {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.8px;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+    margin-top: 40px;
+    padding-left: 2px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-header:first-child { margin-top: 0; }
+  .section-header::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border-light);
+  }
+
+  /* KPI GRID */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 12px;
+  }
+  .kpi-card {
+    background: var(--surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius);
+    padding: 20px;
+    transition: all 0.25s ease;
+    opacity: 0;
+    animation: fadeUp 0.5s ease forwards;
+    position: relative;
+    overflow: hidden;
+  }
+  .kpi-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    opacity: 0;
+    transition: opacity 0.25s;
+  }
+  .kpi-card:hover::before { opacity: 1; }
+  .kpi-card:hover {
+    border-color: var(--border);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.35);
+  }
+  .kpi-card:nth-child(1) { animation-delay: 0.08s; }
+  .kpi-card:nth-child(1)::before { background: var(--accent-blue); }
+  .kpi-card:nth-child(2) { animation-delay: 0.14s; }
+  .kpi-card:nth-child(2)::before { background: var(--accent-teal); }
+  .kpi-card:nth-child(3) { animation-delay: 0.20s; }
+  .kpi-card:nth-child(3)::before { background: var(--amber); }
+  .kpi-card:nth-child(4) { animation-delay: 0.26s; }
+  .kpi-card:nth-child(4)::before { background: var(--emerald); }
+  .kpi-card:nth-child(5) { animation-delay: 0.32s; }
+  .kpi-card:nth-child(5)::before { background: var(--coral); }
+  .kpi-card:nth-child(6) { animation-delay: 0.38s; }
+  .kpi-card:nth-child(6)::before { background: var(--accent-blue); }
+
+  .kpi-title {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin-bottom: 12px;
+  }
+  .kpi-value {
+    font-family: 'Fraunces', serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.5px;
+    line-height: 1;
+    font-optical-sizing: auto;
+  }
+  .kpi-meta {
+    margin-top: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+  }
+  .kpi-prev {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-weight: 400;
+  }
+  .kpi-change {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 6px;
+    white-space: nowrap;
+  }
+  .kpi-change.up { color: var(--emerald); background: var(--emerald-dim); }
+  .kpi-change.down { color: var(--coral); background: var(--coral-dim); }
+
+  /* CARD */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius);
+    padding: 24px;
+    opacity: 0;
+    animation: fadeUp 0.5s ease forwards;
+  }
+  .card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  .card-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -0.2px;
+  }
+  .card-subtitle {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+
+  /* TABLE */
+  .table-wrapper { overflow-x: auto; }
+  .perf-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .perf-table thead th {
+    text-align: left;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--text-muted);
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
+    transition: color 0.2s;
+  }
+  .perf-table thead th:hover { color: var(--accent-blue); }
+  .perf-table thead th.sorted { color: var(--accent-blue); }
+  .perf-table thead th .sort-arrow {
+    margin-left: 4px;
+    opacity: 0.3;
+    font-size: 9px;
+  }
+  .perf-table thead th.sorted .sort-arrow { opacity: 1; }
+  .perf-table tbody td {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border-light);
+    color: var(--text-secondary);
+    font-weight: 400;
+    font-variant-numeric: tabular-nums;
+  }
+  .perf-table tbody tr { transition: background 0.15s; }
+  .perf-table tbody tr:hover { background: rgba(255,255,255,0.02); }
+  .perf-table tbody tr:last-child td { border-bottom: none; }
+  .channel-cell {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+  .channel-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .roas-pill {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 6px;
+    display: inline-block;
+  }
+  .roas-pill.good { color: var(--emerald); background: var(--emerald-dim); }
+  .roas-pill.ok { color: var(--amber); background: var(--amber-dim); }
+  .roas-pill.bad { color: var(--coral); background: var(--coral-dim); }
+
+  /* CHART GRID */
+  .chart-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  .chart-card {
+    background: var(--surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius);
+    padding: 22px 24px;
+    opacity: 0;
+    animation: fadeUp 0.5s ease forwards;
+  }
+  .chart-container {
+    position: relative;
+    height: 220px;
+  }
+  .chart-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+    letter-spacing: -0.1px;
+  }
+  .chart-sublabel {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+  }
+
+  /* BOTTOM ROW */
+  .bottom-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+
+  /* BENCHMARK TABLE */
+  .bench-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .bench-table thead th {
+    text-align: left;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--text-muted);
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  .bench-table tbody td {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border-light);
+    color: var(--text-secondary);
+    font-variant-numeric: tabular-nums;
+  }
+  .bench-table tbody tr:last-child td { border-bottom: none; }
+  .bench-diff {
+    font-weight: 600;
+    font-size: 12px;
+  }
+  .bench-diff.up { color: var(--emerald); }
+  .bench-diff.down { color: var(--coral); }
+
+  /* MOMENTUM */
+  .momentum-big {
+    text-align: center;
+    padding: 16px 0 8px;
+  }
+  .momentum-index {
+    font-family: 'Fraunces', serif;
+    font-size: 64px;
+    font-weight: 700;
+    letter-spacing: -2px;
+    line-height: 1;
+    font-optical-sizing: auto;
+  }
+  .momentum-label-text {
+    font-size: 13px;
+    font-weight: 600;
+    margin-top: 8px;
+    letter-spacing: 0.5px;
+  }
+  .momentum-desc {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 6px;
+    max-width: 320px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.6;
+  }
+  .momentum-bars {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-top: 28px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-light);
+  }
+  .momentum-bar-item { text-align: center; }
+  .momentum-bar-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--text-muted);
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  .momentum-bar-value {
+    font-size: 22px;
+    font-weight: 700;
+    font-family: 'Fraunces', serif;
+  }
+
+  /* INTERPRETATION LEGEND */
+  .interp-row {
+    display: flex;
+    justify-content: center;
+    gap: 28px;
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border-light);
+  }
+  .interp-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+  .interp-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+  }
+
+  /* FOOTER */
+  .scroll-hint {
+    display: none;
+  }
+  .footer-note {
+    text-align: center;
+    padding: 44px 0 0;
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 0.3px;
+    opacity: 0;
+    animation: fadeIn 0.5s ease 1.2s both;
+    line-height: 1.7;
+  }
+
+  /* ===== TABLET ===== */
+  @media (max-width: 1100px) {
+    .kpi-grid { grid-template-columns: repeat(3, 1fr); }
+    .chart-grid, .bottom-grid { grid-template-columns: 1fr; }
+    .dash-header, .filters-bar, .dash-main { padding-left: 24px; padding-right: 24px; }
+  }
+
+  /* ===== MOBILE ===== */
+  @media (max-width: 640px) {
+    .dash-header {
+      padding: 14px 16px;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    .header-left h1 {
+      font-size: 18px;
+    }
+    .header-left .header-sub {
+      font-size: 10px;
+    }
+
+    .filters-bar {
+      padding: 12px 16px;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 10px;
+    }
+    .filter-group {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 6px;
+    }
+    .filter-divider {
+      display: none;
+    }
+    select {
+      width: 100%;
+      padding: 10px 32px 10px 14px;
+      font-size: 13px;
+    }
+
+    .dash-main {
+      padding: 20px 16px 60px;
+    }
+
+    .section-header {
+      margin-top: 28px;
+      margin-bottom: 12px;
+      font-size: 9px;
+      letter-spacing: 1.5px;
+    }
+
+    /* KPIs: 2-col on mobile */
+    .kpi-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+    .kpi-card {
+      padding: 16px;
+    }
+    .kpi-value {
+      font-size: 22px;
+    }
+    .kpi-title {
+      font-size: 10px;
+    }
+    .kpi-meta {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+      margin-top: 10px;
+    }
+
+    /* Cards */
+    .card {
+      padding: 16px;
+    }
+    .card-title {
+      font-size: 13px;
+    }
+
+    /* Table: horizontal scroll with hint */
+    .scroll-hint {
+      display: block;
+      color: var(--accent-blue);
+      margin-top: 2px;
+    }
+    .table-wrapper {
+      margin: 0 -16px;
+      padding: 0 16px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .perf-table {
+      min-width: 620px;
+    }
+    .perf-table thead th {
+      padding: 10px 12px;
+      font-size: 9px;
+    }
+    .perf-table tbody td {
+      padding: 12px;
+      font-size: 12px;
+    }
+
+    /* Charts: single column, shorter */
+    .chart-grid {
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+    .chart-card {
+      padding: 16px;
+    }
+    .chart-container {
+      height: 180px;
+    }
+
+    /* Bottom grid */
+    .bottom-grid {
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    /* Benchmark table */
+    .bench-table {
+      font-size: 12px;
+    }
+    .bench-table thead th {
+      padding: 8px 10px;
+      font-size: 9px;
+    }
+    .bench-table tbody td {
+      padding: 10px;
+    }
+
+    /* Momentum */
+    .momentum-index {
+      font-size: 48px;
+    }
+    .momentum-label-text {
+      font-size: 12px;
+    }
+    .momentum-desc {
+      font-size: 11px;
+    }
+    .momentum-bars {
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+    .momentum-bar-value {
+      font-size: 18px;
+    }
+    .momentum-bar-label {
+      font-size: 9px;
+    }
+    .interp-row {
+      gap: 16px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .interp-item {
+      font-size: 10px;
+    }
+
+    .footer-note {
+      font-size: 10px;
+      padding-top: 32px;
+    }
+  }
+
+  /* ===== SMALL MOBILE ===== */
+  @media (max-width: 380px) {
+    .kpi-grid {
+      grid-template-columns: 1fr;
+    }
+    .kpi-value {
+      font-size: 24px;
+    }
+    .kpi-meta {
+      flex-direction: row;
+      align-items: center;
+    }
+    .momentum-bars {
+      flex-direction: column;
+      gap: 16px;
+      align-items: center;
+    }
+  }
+</style>
+</head>
+<body>
+
+<header class="dash-header">
+  <div class="header-left">
+    <div class="header-sub">Zoho Analytics</div>
+    <h1>Advertising Performance Dashboard</h1>
+  </div>
+  <div class="badge-preview">Layout Preview</div>
+</header>
+
+<div class="filters-bar">
+  <div class="filter-group">
+    <span class="filter-label">Date Range</span>
+    <select id="dateFilter">
+      <option>Last 12 Weeks</option>
+      <option>Last 8 Weeks</option>
+      <option>Last 4 Weeks</option>
+    </select>
+  </div>
+  <div class="filter-divider"></div>
+  <div class="filter-group">
+    <span class="filter-label">Channel</span>
+    <select id="channelFilter">
+      <option>All Channels</option>
+      <option>Google Ads</option>
+      <option>Meta Ads</option>
+      <option>TikTok Ads</option>
+      <option>LinkedIn Ads</option>
+      <option>X (Twitter) Ads</option>
+    </select>
+  </div>
+</div>
+
+<main class="dash-main">
+
+  <!-- KPI SECTION -->
+  <div class="section-header">Key Performance Indicators</div>
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-title">Total Revenue</div>
+      <div class="kpi-value">$184,230</div>
+      <div class="kpi-meta">
+        <span class="kpi-prev">Prev: $171,400</span>
+        <span class="kpi-change up">+7.5%</span>
+      </div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-title">Ads Revenue</div>
+      <div class="kpi-value">$142,680</div>
+      <div class="kpi-meta">
+        <span class="kpi-prev">Prev: $134,100</span>
+        <span class="kpi-change up">+6.4%</span>
+      </div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-title">Ad Spend</div>
+      <div class="kpi-value">$38,450</div>
+      <div class="kpi-meta">
+        <span class="kpi-prev">Prev: $36,200</span>
+        <span class="kpi-change down">+6.2%</span>
+      </div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-title">ROAS</div>
+      <div class="kpi-value">3.71x</div>
+      <div class="kpi-meta">
+        <span class="kpi-prev">Prev: 3.70x</span>
+        <span class="kpi-change up">+0.3%</span>
+      </div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-title">CPA</div>
+      <div class="kpi-value">$24.65</div>
+      <div class="kpi-meta">
+        <span class="kpi-prev">Prev: $25.10</span>
+        <span class="kpi-change up">-1.8%</span>
+      </div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-title">Purchases</div>
+      <div class="kpi-value">1,560</div>
+      <div class="kpi-meta">
+        <span class="kpi-prev">Prev: 1,442</span>
+        <span class="kpi-change up">+8.2%</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHANNEL TABLE -->
+  <div class="section-header">Channel Performance</div>
+  <div class="card" style="animation-delay:0.45s;">
+    <div class="card-header">
+      <div>
+        <div class="card-title">Performance by Channel</div>
+        <div class="card-subtitle">Click any column header to sort</div>
+        <div class="card-subtitle scroll-hint">Swipe table to see all columns →</div>
+      </div>
+    </div>
+    <div class="table-wrapper">
+      <table class="perf-table" id="channelTable">
+        <thead>
+          <tr>
+            <th data-col="channel">Channel <span class="sort-arrow">▼</span></th>
+            <th data-col="spend">Ad Spend <span class="sort-arrow">▼</span></th>
+            <th data-col="adsRev">Ads Revenue <span class="sort-arrow">▼</span></th>
+            <th data-col="totalRev">Total Revenue <span class="sort-arrow">▼</span></th>
+            <th data-col="roas" class="sorted">ROAS <span class="sort-arrow">▼</span></th>
+            <th data-col="cpa">CPA <span class="sort-arrow">▼</span></th>
+            <th data-col="purchases">Purchases <span class="sort-arrow">▼</span></th>
+          </tr>
+        </thead>
+        <tbody id="channelBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- TREND CHARTS -->
+  <div class="section-header">Weekly Trends — Past 12 Weeks</div>
+  <div class="chart-grid">
+    <div class="chart-card" style="animation-delay:0.55s;">
+      <div class="chart-label">Revenue</div>
+      <div class="chart-sublabel">Total revenue per week</div>
+      <div class="chart-container"><canvas id="revenueChart"></canvas></div>
+    </div>
+    <div class="chart-card" style="animation-delay:0.6s;">
+      <div class="chart-label">Ad Spend</div>
+      <div class="chart-sublabel">Weekly advertising expenditure</div>
+      <div class="chart-container"><canvas id="spendChart"></canvas></div>
+    </div>
+    <div class="chart-card" style="animation-delay:0.65s;">
+      <div class="chart-label">ROAS</div>
+      <div class="chart-sublabel">Return on ad spend ratio</div>
+      <div class="chart-container"><canvas id="roasChart"></canvas></div>
+    </div>
+    <div class="chart-card" style="animation-delay:0.7s;">
+      <div class="chart-label">CPA</div>
+      <div class="chart-sublabel">Cost per acquisition</div>
+      <div class="chart-container"><canvas id="cpaChart"></canvas></div>
+    </div>
+  </div>
+
+  <!-- BOTTOM: BENCHMARK + MOMENTUM -->
+  <div class="section-header">Benchmarks &amp; Signals</div>
+  <div class="bottom-grid">
+    <div class="card" style="animation-delay:0.8s;">
+      <div class="card-header">
+        <div>
+          <div class="card-title">4-Week Average Benchmark</div>
+          <div class="card-subtitle">Current week vs trailing 4-week average</div>
+        </div>
+      </div>
+      <table class="bench-table">
+        <thead>
+          <tr>
+            <th>Metric</th>
+            <th>Current Week</th>
+            <th>4-Wk Avg</th>
+            <th>Diff</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="color:var(--text-primary);font-weight:600;">Revenue</td>
+            <td>$184,230</td>
+            <td>$176,500</td>
+            <td><span class="bench-diff up">+4.4%</span></td>
+          </tr>
+          <tr>
+            <td style="color:var(--text-primary);font-weight:600;">Ad Spend</td>
+            <td>$38,450</td>
+            <td>$37,100</td>
+            <td><span class="bench-diff down">+3.6%</span></td>
+          </tr>
+          <tr>
+            <td style="color:var(--text-primary);font-weight:600;">ROAS</td>
+            <td>3.71x</td>
+            <td>3.58x</td>
+            <td><span class="bench-diff up">+3.6%</span></td>
+          </tr>
+          <tr>
+            <td style="color:var(--text-primary);font-weight:600;">CPA</td>
+            <td>$24.65</td>
+            <td>$25.80</td>
+            <td><span class="bench-diff up">-4.5%</span></td>
+          </tr>
+          <tr>
+            <td style="color:var(--text-primary);font-weight:600;">Purchases</td>
+            <td>1,560</td>
+            <td>1,480</td>
+            <td><span class="bench-diff up">+5.4%</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card" style="animation-delay:0.85s;">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Performance Momentum</div>
+          <div class="card-subtitle">Revenue growth vs spend growth efficiency</div>
+        </div>
+      </div>
+      <div class="momentum-big">
+        <div class="momentum-index" style="color:var(--emerald);">1.21</div>
+        <div class="momentum-label-text" style="color:var(--emerald);">Healthy Scaling</div>
+        <div class="momentum-desc">Revenue is growing faster than ad spend — efficiency is improving. Signal to continue scaling current strategy.</div>
+      </div>
+      <div class="momentum-bars">
+        <div class="momentum-bar-item">
+          <div class="momentum-bar-label">Revenue Growth</div>
+          <div class="momentum-bar-value" style="color:var(--emerald);">+7.5%</div>
+        </div>
+        <div class="momentum-bar-item">
+          <div class="momentum-bar-label">Spend Growth</div>
+          <div class="momentum-bar-value" style="color:var(--amber);">+6.2%</div>
+        </div>
+        <div class="momentum-bar-item">
+          <div class="momentum-bar-label">Efficiency Index</div>
+          <div class="momentum-bar-value" style="color:var(--accent-blue);">1.21</div>
+        </div>
+      </div>
+      <div class="interp-row">
+        <div class="interp-item">
+          <span class="interp-dot" style="background:var(--emerald);"></span>
+          &gt;1 = Healthy
+        </div>
+        <div class="interp-item">
+          <span class="interp-dot" style="background:var(--amber);"></span>
+          ≈1 = Stable
+        </div>
+        <div class="interp-item">
+          <span class="interp-dot" style="background:var(--coral);"></span>
+          &lt;1 = Inefficient
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-note">
+    This is a layout preview with sample data.<br>
+    The final Zoho Analytics dashboard will connect to your live dataset with dynamic filters and auto-updating calculated fields.
+  </div>
+
+</main>
+
+<script>
+// ===== CHANNEL DATA =====
+const channels = [
+  { channel: 'Google Ads', spend: 14200, adsRev: 56800, totalRev: 72500, purchases: 580, color: '#4285F4' },
+  { channel: 'Meta Ads', spend: 11800, adsRev: 45100, totalRev: 54200, purchases: 490, color: '#0081FB' },
+  { channel: 'TikTok Ads', spend: 6400, adsRev: 22400, totalRev: 31800, purchases: 270, color: '#FE2C55' },
+  { channel: 'LinkedIn Ads', spend: 3850, adsRev: 11580, totalRev: 16230, purchases: 140, color: '#0A66C2' },
+  { channel: 'X (Twitter) Ads', spend: 2200, adsRev: 6800, totalRev: 9500, purchases: 80, color: '#A1A1AA' },
+];
+channels.forEach(c => {
+  c.roas = c.adsRev / c.spend;
+  c.cpa = c.spend / c.purchases;
+});
+
+// ===== TABLE SORT =====
+let sortCol = 'roas';
+let sortDir = -1;
+
+function renderTable() {
+  const sorted = [...channels].sort((a, b) => {
+    let va = a[sortCol], vb = b[sortCol];
+    if (typeof va === 'string') return sortDir * va.localeCompare(vb);
+    return sortDir * (va - vb);
+  });
+  document.getElementById('channelBody').innerHTML = sorted.map(c => {
+    const rc = c.roas >= 3.5 ? 'good' : c.roas >= 2.5 ? 'ok' : 'bad';
+    return `<tr>
+      <td><div class="channel-cell"><span class="channel-dot" style="background:${c.color}"></span>${c.channel}</div></td>
+      <td>$${c.spend.toLocaleString()}</td>
+      <td>$${c.adsRev.toLocaleString()}</td>
+      <td>$${c.totalRev.toLocaleString()}</td>
+      <td><span class="roas-pill ${rc}">${c.roas.toFixed(2)}x</span></td>
+      <td>$${c.cpa.toFixed(2)}</td>
+      <td>${c.purchases.toLocaleString()}</td>
+    </tr>`;
+  }).join('');
+}
+
+document.querySelectorAll('#channelTable thead th').forEach(th => {
+  th.addEventListener('click', () => {
+    const col = th.dataset.col;
+    if (sortCol === col) sortDir *= -1;
+    else { sortCol = col; sortDir = -1; }
+    document.querySelectorAll('#channelTable thead th').forEach(t => t.classList.remove('sorted'));
+    th.classList.add('sorted');
+    th.querySelector('.sort-arrow').textContent = sortDir === -1 ? '▼' : '▲';
+    renderTable();
+  });
+});
+renderTable();
+
+// ===== CHART DATA =====
+const weeks = ['Wk 1','Wk 2','Wk 3','Wk 4','Wk 5','Wk 6','Wk 7','Wk 8','Wk 9','Wk 10','Wk 11','Wk 12'];
+const revData  = [148000,152000,158000,155000,163000,168000,171400,165000,173000,176500,178000,184230];
+const spenData = [32000,33500,34200,33800,35000,35500,36200,34800,36500,37100,37500,38450];
+const roasArr  = revData.map((r,i) => +((r * 0.775) / spenData[i]).toFixed(2));
+const cpaArr   = spenData.map((s,i) => +(s / (revData[i] / 118)).toFixed(2));
+
+// ===== CHART SETUP =====
+Chart.defaults.color = '#71717A';
+Chart.defaults.borderColor = 'rgba(39,39,42,0.4)';
+Chart.defaults.font.family = "'Sora', sans-serif";
+Chart.defaults.font.size = 11;
+
+function grad(ctx, c1, c2) {
+  const g = ctx.createLinearGradient(0, 0, 0, 220);
+  g.addColorStop(0, c1);
+  g.addColorStop(1, c2);
+  return g;
+}
+
+const baseOpts = (yCallback) => ({
+  responsive: true,
+  maintainAspectRatio: false,
+  animation: { duration: 900, easing: 'easeOutQuart' },
+  interaction: { intersect: false, mode: 'index' },
+  plugins: {
+    legend: { display: false },
+    tooltip: {
+      backgroundColor: '#1C1C20',
+      borderColor: '#27272A',
+      borderWidth: 1,
+      titleFont: { weight: '600', size: 12 },
+      bodyFont: { size: 12 },
+      padding: 12,
+      cornerRadius: 8,
+      displayColors: false,
+    }
+  },
+  scales: {
+    x: { grid: { display: false }, ticks: { font: { size: 10 } } },
+    y: {
+      grid: { color: 'rgba(39,39,42,0.3)', lineWidth: 0.5 },
+      ticks: { font: { size: 10 }, callback: yCallback }
+    }
+  }
+});
+
+function lineDataset(data, color, bgFrom, bgTo) {
+  return {
+    data,
+    borderColor: color,
+    backgroundColor: (ctx) => {
+      const chart = ctx.chart;
+      const { ctx: c } = chart;
+      return grad(c, bgFrom, bgTo);
+    },
+    borderWidth: 2.5,
+    fill: true,
+    tension: 0.35,
+    pointRadius: 0,
+    pointHoverRadius: 5,
+    pointHoverBackgroundColor: color,
+    pointHoverBorderColor: '#141417',
+    pointHoverBorderWidth: 2,
+  };
+}
+
+// Revenue
+new Chart(document.getElementById('revenueChart'), {
+  type: 'line',
+  data: { labels: weeks, datasets: [lineDataset(revData, '#60A5FA', 'rgba(96,165,250,0.15)', 'rgba(96,165,250,0)')] },
+  options: {
+    ...baseOpts(v => '$' + (v/1000).toFixed(0) + 'K'),
+    plugins: { ...baseOpts().plugins, tooltip: { ...baseOpts().plugins.tooltip, callbacks: { label: c => 'Revenue: $' + c.parsed.y.toLocaleString() } } }
+  }
+});
+
+// Spend
+new Chart(document.getElementById('spendChart'), {
+  type: 'line',
+  data: { labels: weeks, datasets: [lineDataset(spenData, '#FBBF24', 'rgba(251,191,36,0.12)', 'rgba(251,191,36,0)')] },
+  options: {
+    ...baseOpts(v => '$' + (v/1000).toFixed(0) + 'K'),
+    plugins: { ...baseOpts().plugins, tooltip: { ...baseOpts().plugins.tooltip, callbacks: { label: c => 'Spend: $' + c.parsed.y.toLocaleString() } } }
+  }
+});
+
+// ROAS
+new Chart(document.getElementById('roasChart'), {
+  type: 'line',
+  data: { labels: weeks, datasets: [lineDataset(roasArr, '#34D399', 'rgba(52,211,153,0.12)', 'rgba(52,211,153,0)')] },
+  options: {
+    ...baseOpts(v => v.toFixed(1) + 'x'),
+    plugins: { ...baseOpts().plugins, tooltip: { ...baseOpts().plugins.tooltip, callbacks: { label: c => 'ROAS: ' + c.parsed.y.toFixed(2) + 'x' } } }
+  }
+});
+
+// CPA
+new Chart(document.getElementById('cpaChart'), {
+  type: 'line',
+  data: { labels: weeks, datasets: [lineDataset(cpaArr, '#F87171', 'rgba(248,113,113,0.12)', 'rgba(248,113,113,0)')] },
+  options: {
+    ...baseOpts(v => '$' + v.toFixed(0)),
+    plugins: { ...baseOpts().plugins, tooltip: { ...baseOpts().plugins.tooltip, callbacks: { label: c => 'CPA: $' + c.parsed.y.toFixed(2) } } }
+  }
+});
+</script>
+</body>
+</html>
