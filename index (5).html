@@ -1,0 +1,1711 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Damilare Babalola — Marketing Automation Expert</title>
+    <meta name="description" content="I help businesses build systems that work for them. CRM setup, customer journey design, business process automation, and AI-powered workflows.">
+
+    <!-- ============================================================
+         FONTS — Using Google Fonts (Syne for headings, DM Sans for body)
+         ============================================================ -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+
+    <style>
+        /* ============================================================
+           CSS VARIABLES — EDIT COLORS & FONTS HERE
+           ============================================================ */
+        :root {
+            /* ---- ACCENT COLOR: Change this to change the site's highlight color ---- */
+            --accent: #00D4AA;
+            --accent-dim: #00D4AA22;
+            --accent-glow: #00D4AA40;
+
+            /* ---- DARK THEME ---- */
+            --dark-bg: #0A0A0F;
+            --dark-bg-secondary: #12121A;
+            --dark-bg-card: #16161F;
+            --dark-text: #E8E8ED;
+            --dark-text-muted: #8888A0;
+            --dark-border: #2A2A3A;
+
+            /* ---- LIGHT THEME ---- */
+            --light-bg: #F5F3F0;
+            --light-bg-secondary: #EDEAE6;
+            --light-bg-card: #FFFFFF;
+            --light-text: #1A1A2E;
+            --light-text-muted: #6B6B80;
+            --light-border: #D8D5D0;
+
+            /* ---- FONTS ---- */
+            --font-display: 'Syne', sans-serif;
+            --font-body: 'DM Sans', sans-serif;
+
+            /* ---- SPACING ---- */
+            --section-padding: clamp(4rem, 10vw, 8rem);
+            --container-width: 1200px;
+        }
+
+        /* ---- THEME APPLICATION ---- */
+        [data-theme="dark"] {
+            --bg: var(--dark-bg);
+            --bg-secondary: var(--dark-bg-secondary);
+            --bg-card: var(--dark-bg-card);
+            --text: var(--dark-text);
+            --text-muted: var(--dark-text-muted);
+            --border: var(--dark-border);
+        }
+        [data-theme="light"] {
+            --bg: var(--light-bg);
+            --bg-secondary: var(--light-bg-secondary);
+            --bg-card: var(--light-bg-card);
+            --text: var(--light-text);
+            --text-muted: var(--light-text-muted);
+            --border: var(--light-border);
+        }
+
+        /* ============================================================
+           RESET & BASE
+           ============================================================ */
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html {
+            scroll-behavior: smooth;
+            scroll-padding-top: 80px;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            transition: background 0.4s ease, color 0.4s ease;
+            overflow-x: hidden;
+        }
+
+        a { color: inherit; text-decoration: none; }
+        img { max-width: 100%; display: block; }
+        ul { list-style: none; }
+
+        .container {
+            width: 100%;
+            max-width: var(--container-width);
+            margin: 0 auto;
+            padding: 0 clamp(1.25rem, 4vw, 2.5rem);
+        }
+
+        /* ============================================================
+           SCROLL ANIMATIONS
+           ============================================================ */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .reveal-delay-1 { transition-delay: 0.1s; }
+        .reveal-delay-2 { transition-delay: 0.2s; }
+        .reveal-delay-3 { transition-delay: 0.3s; }
+        .reveal-delay-4 { transition-delay: 0.4s; }
+
+        /* ============================================================
+           NAVIGATION
+           ============================================================ */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            padding: 1rem 0;
+            transition: background 0.3s ease, backdrop-filter 0.3s ease, box-shadow 0.3s ease;
+        }
+        .navbar.scrolled {
+            background: var(--bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: 0 1px 0 var(--border);
+        }
+        [data-theme="dark"] .navbar.scrolled { background: rgba(10,10,15,0.85); }
+        [data-theme="light"] .navbar.scrolled { background: rgba(245,243,240,0.85); }
+
+        .navbar .container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-logo {
+            font-family: var(--font-display);
+            font-weight: 800;
+            font-size: 1.3rem;
+            letter-spacing: -0.02em;
+        }
+        .nav-logo span { color: var(--accent); }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+        .nav-links a {
+            font-size: 0.88rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            transition: color 0.3s;
+            letter-spacing: 0.02em;
+        }
+        .nav-links a:hover { color: var(--accent); }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            width: 44px;
+            height: 24px;
+            border-radius: 12px;
+            background: var(--border);
+            border: none;
+            cursor: pointer;
+            position: relative;
+            transition: background 0.3s;
+        }
+        .theme-toggle::after {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--accent);
+            transition: transform 0.3s ease;
+        }
+        [data-theme="light"] .theme-toggle::after {
+            transform: translateX(20px);
+        }
+        .theme-icon {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.65rem;
+            line-height: 1;
+            pointer-events: none;
+        }
+        .theme-icon.moon { left: 5px; }
+        .theme-icon.sun { right: 5px; }
+
+        .btn-nav {
+            padding: 0.55rem 1.25rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            font-family: var(--font-body);
+            background: var(--accent);
+            color: #0A0A0F;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .btn-nav:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 20px var(--accent-glow);
+        }
+
+        /* Mobile Nav */
+        .nav-hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px;
+        }
+        .nav-hamburger span {
+            width: 22px;
+            height: 2px;
+            background: var(--text);
+            border-radius: 2px;
+            transition: 0.3s;
+        }
+
+        .mobile-nav {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: var(--bg);
+            z-index: 999;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2rem;
+        }
+        .mobile-nav.active { display: flex; }
+        .mobile-nav a {
+            font-family: var(--font-display);
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text);
+            transition: color 0.3s;
+        }
+        .mobile-nav a:hover { color: var(--accent); }
+        .mobile-nav-close {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            background: none;
+            border: none;
+            font-size: 1.8rem;
+            color: var(--text);
+            cursor: pointer;
+        }
+
+        /* ============================================================
+           HERO SECTION
+           ============================================================ */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding-top: 80px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Subtle grid background */
+        .hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(var(--border) 1px, transparent 1px),
+                linear-gradient(90deg, var(--border) 1px, transparent 1px);
+            background-size: 60px 60px;
+            opacity: 0.3;
+            mask-image: radial-gradient(ellipse at 30% 50%, black 20%, transparent 70%);
+            -webkit-mask-image: radial-gradient(ellipse at 30% 50%, black 20%, transparent 70%);
+        }
+
+        /* Accent glow */
+        .hero::after {
+            content: '';
+            position: absolute;
+            top: 20%;
+            right: -10%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 1rem;
+            border-radius: 50px;
+            border: 1px solid var(--border);
+            background: var(--bg-secondary);
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            margin-bottom: 1.2rem;
+            animation: fadeInUp 0.8s ease forwards;
+        }
+        .hero-badge .dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--accent);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero h1 {
+            font-family: var(--font-display);
+            font-size: clamp(2.2rem, 4.2vw, 3.5rem);
+            font-weight: 800;
+            line-height: 1.12;
+            letter-spacing: -0.03em;
+            margin-bottom: 1.2rem;
+            animation: fadeInUp 0.8s 0.15s ease both;
+        }
+        .hero h1 .highlight {
+            color: var(--accent);
+            position: relative;
+        }
+
+        .hero-description {
+            font-size: clamp(0.95rem, 1.5vw, 1.1rem);
+            color: var(--text-muted);
+            max-width: 580px;
+            margin-bottom: 2rem;
+            line-height: 1.75;
+            animation: fadeInUp 0.8s 0.3s ease both;
+        }
+
+        .hero-ctas {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            animation: fadeInUp 0.8s 0.45s ease both;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.85rem 2rem;
+            border-radius: 10px;
+            font-family: var(--font-body);
+            font-size: 0.95rem;
+            font-weight: 600;
+            background: var(--accent);
+            color: #0A0A0F;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.3s;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px var(--accent-glow);
+        }
+
+        .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.85rem 2rem;
+            border-radius: 10px;
+            font-family: var(--font-body);
+            font-size: 0.95rem;
+            font-weight: 600;
+            background: transparent;
+            color: var(--text);
+            border: 1.5px solid var(--border);
+            cursor: pointer;
+            transition: border-color 0.3s, background 0.3s;
+        }
+        .btn-secondary:hover {
+            border-color: var(--accent);
+            background: var(--accent-dim);
+        }
+
+        /* Trust Bar */
+        .hero-trust {
+            display: flex;
+            gap: 2.5rem;
+            margin-top: 2.5rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+            animation: fadeInUp 0.8s 0.6s ease both;
+        }
+        .trust-item {
+            display: flex;
+            flex-direction: column;
+        }
+        .trust-number {
+            font-family: var(--font-display);
+            font-size: clamp(2rem, 3vw, 2.8rem);
+            font-weight: 800;
+            color: var(--accent);
+        }
+        .trust-label {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        /* ============================================================
+           SECTION SHARED STYLES
+           ============================================================ */
+        section {
+            padding: var(--section-padding) 0;
+        }
+
+        .section-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: var(--font-display);
+            font-size: 0.78rem;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 1rem;
+        }
+        .section-label::before {
+            content: '';
+            width: 20px;
+            height: 1.5px;
+            background: var(--accent);
+        }
+
+        .section-title {
+            font-family: var(--font-display);
+            font-size: clamp(1.6rem, 3vw, 2.2rem);
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            line-height: 1.15;
+            margin-bottom: 0.8rem;
+        }
+
+        .section-subtitle {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            max-width: 550px;
+            line-height: 1.7;
+        }
+
+        /* ============================================================
+           ABOUT SECTION
+           ============================================================ */
+        .about-grid {
+            display: grid;
+            grid-template-columns: 0.75fr 1.25fr;
+            gap: 3.5rem;
+            align-items: start;
+            margin-top: 2.5rem;
+        }
+
+        .about-image-wrapper {
+            position: relative;
+        }
+        .about-image {
+            width: 100%;
+            aspect-ratio: 3/4;
+            border-radius: 16px;
+            overflow: hidden;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            position: relative;
+        }
+        /* ---- REPLACE WITH YOUR PHOTO ----
+           Change the background to: background-image: url('your-photo.jpg');
+           and add: background-size: cover; background-position: center;
+           --------------------------------- */
+        .about-image-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+        .about-image-placeholder .initials {
+            font-family: var(--font-display);
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: var(--accent);
+            line-height: 1;
+        }
+
+        /* Decorative element */
+        .about-image-wrapper::after {
+            content: '';
+            position: absolute;
+            bottom: -12px;
+            right: -12px;
+            width: 50%;
+            height: 50%;
+            border: 2px solid var(--accent);
+            border-radius: 16px;
+            z-index: -1;
+            opacity: 0.3;
+        }
+
+        .about-text p {
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+            font-size: 0.92rem;
+            line-height: 1.75;
+        }
+        .about-text strong {
+            color: var(--text);
+            font-weight: 600;
+        }
+        .about-tagline {
+            color: var(--text) !important;
+            font-size: 0.95rem !important;
+            font-weight: 500;
+            margin-top: 0.4rem;
+            padding-left: 1rem;
+            border-left: 3px solid var(--accent);
+        }
+
+        /* ============================================================
+           TOOLS / TECH STACK — STATIC BADGES
+           ============================================================ */
+        .tools-strip {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border);
+        }
+        .tools-strip-label {
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 0.8rem;
+            display: block;
+        }
+        .tools-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+        }
+        .tool-badge {
+            padding: 0.5rem 1.1rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--bg-secondary);
+            font-size: 0.82rem;
+            font-weight: 500;
+            color: var(--text);
+            transition: border-color 0.3s, background 0.3s;
+        }
+        .tool-badge:hover {
+            border-color: var(--accent);
+            background: var(--accent-dim);
+        }
+
+        /* ============================================================
+           SERVICES SECTION
+           ============================================================ */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-top: 3rem;
+        }
+
+        .service-card {
+            padding: 2rem;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+            transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        .service-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+        }
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--accent);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .service-card:hover::before { opacity: 1; }
+
+        .service-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: var(--accent-dim);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            margin-bottom: 1.2rem;
+        }
+
+        .service-card h3 {
+            font-family: var(--font-display);
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        .service-card p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.7;
+        }
+
+        /* ============================================================
+           PROJECTS SECTION
+           ============================================================ */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-top: 3rem;
+        }
+
+        .project-card {
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+            overflow: hidden;
+            transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+        }
+        .project-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+        }
+
+        .project-image {
+            width: 100%;
+            height: 200px;
+            background: var(--bg-secondary);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        /* ---- REPLACE WITH PROJECT SCREENSHOT ----
+           Add: <img src="your-project-image.jpg" alt="Project Name" style="width:100%;height:100%;object-fit:cover;">
+           inside each .project-image div
+           ---------------------------------------- */
+        .project-image-placeholder {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .project-image-placeholder svg {
+            opacity: 0.3;
+        }
+
+        .project-tag {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            padding: 0.3rem 0.7rem;
+            border-radius: 6px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            background: var(--accent);
+            color: #0A0A0F;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .project-content {
+            padding: 1.3rem;
+        }
+        .project-content h3 {
+            font-family: var(--font-display);
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin-bottom: 0.4rem;
+        }
+        .project-content p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.7;
+            margin-bottom: 1rem;
+        }
+        .project-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: var(--accent);
+            transition: gap 0.3s;
+        }
+        .project-link:hover { gap: 0.7rem; }
+
+        /* ============================================================
+           TESTIMONIALS SECTION — SLIDER
+           ============================================================ */
+        .testimonials-section {
+            background: var(--bg-secondary);
+        }
+
+        .testimonials-slider-wrapper {
+            margin-top: 3rem;
+            position: relative;
+        }
+
+        .testimonials-slider {
+            overflow: hidden;
+            border-radius: 14px;
+        }
+
+        .testimonials-track {
+            display: flex;
+            transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .testimonial-slide {
+            min-width: 100%;
+            padding: 0 0.25rem;
+            box-sizing: border-box;
+        }
+
+        .testimonial-card {
+            padding: 2rem;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+            position: relative;
+            min-height: 220px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .testimonial-card::before {
+            content: '\201C';
+            font-family: var(--font-display);
+            font-size: 4rem;
+            font-weight: 800;
+            color: var(--accent);
+            opacity: 0.15;
+            position: absolute;
+            top: 10px;
+            right: 24px;
+            line-height: 1;
+        }
+
+        .testimonial-text {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            line-height: 1.85;
+            margin-bottom: 1.5rem;
+            font-style: italic;
+        }
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+        .testimonial-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--accent-dim);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: var(--accent);
+        }
+        .testimonial-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        .testimonial-role {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+        }
+
+        /* Stars */
+        .testimonial-stars {
+            color: #F5A623;
+            font-size: 0.9rem;
+            margin-bottom: 0.8rem;
+            letter-spacing: 2px;
+        }
+
+        /* Slider Controls */
+        .slider-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        .slider-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: border-color 0.3s, background 0.3s, transform 0.2s;
+        }
+        .slider-btn:hover {
+            border-color: var(--accent);
+            background: var(--accent-dim);
+            transform: scale(1.05);
+        }
+        .slider-btn svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .slider-dots {
+            display: flex;
+            gap: 0.5rem;
+        }
+        .slider-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--border);
+            border: none;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.3s;
+        }
+        .slider-dot.active {
+            background: var(--accent);
+            transform: scale(1.2);
+        }
+
+        /* ============================================================
+           CTA SECTION
+           ============================================================ */
+        .cta-section {
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, var(--accent-glow) 0%, transparent 65%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .cta-content {
+            position: relative;
+            z-index: 1;
+        }
+        .cta-content .section-title {
+            max-width: 600px;
+            margin: 0 auto 1rem;
+        }
+        .cta-content .section-subtitle {
+            max-width: 480px;
+            margin: 0 auto 2.5rem;
+        }
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        /* ============================================================
+           FOOTER
+           ============================================================ */
+        footer {
+            border-top: 1px solid var(--border);
+            padding: 3rem 0;
+        }
+        .footer-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+        .footer-left {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+        .footer-left strong {
+            color: var(--text);
+            font-family: var(--font-display);
+        }
+
+        .footer-socials {
+            display: flex;
+            gap: 0.6rem;
+        }
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: border-color 0.3s, background 0.3s, transform 0.2s;
+            color: var(--text-muted);
+        }
+        .social-icon:hover {
+            border-color: var(--accent);
+            background: var(--accent-dim);
+            color: var(--accent);
+            transform: translateY(-2px);
+        }
+        .social-icon svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        /* ============================================================
+           RESPONSIVE
+           ============================================================ */
+        @media (max-width: 900px) {
+            .nav-links { display: none; }
+            .nav-hamburger { display: flex; }
+            .btn-nav { display: none; }
+
+            .about-grid {
+                grid-template-columns: 1fr;
+                gap: 2.5rem;
+            }
+            .about-image-wrapper { order: -1; max-width: 350px; margin: 0 auto; }
+
+            .hero-trust {
+                gap: 1.5rem;
+            }
+
+            .projects-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .testimonial-card {
+                padding: 1.8rem;
+            }
+
+            .footer-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            .footer-socials {
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .hero h1 { font-size: 1.9rem; }
+
+            .hero-trust {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            .trust-item {
+                flex-direction: row;
+                align-items: baseline;
+                gap: 0.5rem;
+            }
+
+            .testimonial-text {
+                font-size: 0.92rem;
+            }
+
+            .section-title {
+                font-size: 1.5rem;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .tools-badges {
+                gap: 0.5rem;
+            }
+            .tool-badge {
+                padding: 0.4rem 0.85rem;
+                font-size: 0.78rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ============================================================
+         NAVIGATION
+         To edit: change links, logo text, or booking URL
+         ============================================================ -->
+    <nav class="navbar" id="navbar">
+        <div class="container">
+            <a href="#" class="nav-logo">Damilare<span>.</span></a>
+
+            <div class="nav-links">
+                <a href="#about">About</a>
+                <a href="#services">Services</a>
+                <a href="#projects">Projects</a>
+                <a href="#testimonials">Reviews</a>
+                <a href="#contact">Contact</a>
+            </div>
+
+            <div class="nav-actions">
+                <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+                    <span class="theme-icon moon">🌙</span>
+                    <span class="theme-icon sun">☀️</span>
+                </button>
+                <!-- CHANGE YOUR BOOKING LINK HERE -->
+                <a href="https://cal.com/dami-digital-market" target="_blank" class="btn-nav">Book a Call</a>
+                <button class="nav-hamburger" id="navHamburger" aria-label="Open menu">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Navigation -->
+    <div class="mobile-nav" id="mobileNav">
+        <button class="mobile-nav-close" id="mobileNavClose">&times;</button>
+        <a href="#about" onclick="closeMobileNav()">About</a>
+        <a href="#services" onclick="closeMobileNav()">Services</a>
+        <a href="#projects" onclick="closeMobileNav()">Projects</a>
+        <a href="#testimonials" onclick="closeMobileNav()">Reviews</a>
+        <a href="#contact" onclick="closeMobileNav()">Contact</a>
+        <a href="https://cal.com/dami-digital-market" target="_blank" onclick="closeMobileNav()">Book a Call</a>
+    </div>
+
+    <!-- ============================================================
+         HERO SECTION
+         To edit: change your name, tagline, description, stats
+         ============================================================ -->
+    <section class="hero" id="hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <span class="dot"></span>
+                    Available for new projects
+                </div>
+
+                <!-- CHANGE YOUR NAME & TAGLINE HERE -->
+                <h1>I build systems that make your business <span class="highlight">work for you</span></h1>
+
+                <p class="hero-description">
+                    Marketing Automation Expert helping businesses build CRM systems,
+                    design customer journeys, and automate processes — so you can focus
+                    on growth, not grunt work.
+                </p>
+
+                <div class="hero-ctas">
+                    <!-- CHANGE YOUR BOOKING LINK HERE -->
+                    <a href="https://cal.com/dami-digital-market" target="_blank" class="btn-primary">
+                        Book a Free Call
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </a>
+                    <a href="#projects" class="btn-secondary">View My Work</a>
+                </div>
+
+                <!-- CHANGE YOUR STATS HERE: edit data-target for the number, data-suffix for the symbol after -->
+                <div class="hero-trust" id="heroTrust">
+                    <div class="trust-item">
+                        <span class="trust-number" data-target="50" data-suffix="+">0+</span>
+                        <span class="trust-label">Projects Delivered</span>
+                    </div>
+                    <div class="trust-item">
+                        <span class="trust-number" data-target="30" data-suffix="+">0+</span>
+                        <span class="trust-label">Happy Clients</span>
+                    </div>
+                    <div class="trust-item">
+                        <span class="trust-number" data-target="3" data-suffix="+">0+</span>
+                        <span class="trust-label">Years Experience</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         ABOUT SECTION
+         To edit: change bio text, swap placeholder photo
+         ============================================================ -->
+    <section id="about">
+        <div class="container">
+            <div class="reveal">
+                <span class="section-label">About Me</span>
+            </div>
+            <div class="about-grid">
+                <div class="about-image-wrapper reveal reveal-delay-1">
+                    <div class="about-image">
+                        <!-- REPLACE YOUR PHOTO: change the src below to use a different image -->
+                        <img src="https://i.ibb.co/8gXVzv8f/IMG-1402-1.jpg" alt="Damilare Babalola" style="width:100%;height:100%;object-fit:cover;">
+                    </div>
+                </div>
+
+                <div class="about-text reveal reveal-delay-2">
+                    <h2 class="section-title">I'm Damilare Babalola</h2>
+                    <!-- CHANGE YOUR BIO HERE -->
+                    <p>
+                        A Marketing Automation Expert passionate about helping businesses
+                        work smarter, not harder. I don't just set up tools — I design
+                        <strong>complete systems</strong> that connect your sales, marketing,
+                        and operations into one seamless machine.
+                    </p>
+                    <p>
+                        From building full CRM setups in <strong>GoHighLevel</strong> and the
+                        <strong>Zoho ecosystem</strong>, to mapping out customer journeys that
+                        convert and automating repetitive tasks with <strong>n8n</strong>,
+                        <strong>Zapier</strong>, and AI — every system I build is designed to
+                        free you up so you can focus on growth.
+                    </p>
+                    <p class="about-tagline">
+                        Every business deserves systems that work as hard as they do.
+                        <strong>Let's build yours.</strong>
+                    </p>
+
+                    <!-- TOOLS & TECH STACK — ADD OR REMOVE TOOLS HERE -->
+                    <div class="tools-strip">
+                        <span class="tools-strip-label">Tools I Use</span>
+                        <div class="tools-badges">
+                            <span class="tool-badge">GoHighLevel</span>
+                            <span class="tool-badge">Zoho CRM</span>
+                            <span class="tool-badge">Zoho One</span>
+                            <span class="tool-badge">Zoho Analytics</span>
+                            <span class="tool-badge">Zoho SalesIQ</span>
+                            <span class="tool-badge">Zoho Projects</span>
+                            <span class="tool-badge">Zoho Invoice</span>
+                            <span class="tool-badge">n8n</span>
+                            <span class="tool-badge">Zapier</span>
+                            <span class="tool-badge">AI Automation</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         SERVICES SECTION
+         To edit: change service titles, descriptions, icons
+         ============================================================ -->
+    <section id="services" class="services-section">
+        <div class="container">
+            <div class="reveal">
+                <span class="section-label">What I Do</span>
+                <h2 class="section-title">Services That Drive Results</h2>
+                <p class="section-subtitle">End-to-end systems that automate your business, nurture your leads, and scale your operations.</p>
+            </div>
+
+            <div class="services-grid">
+                <div class="service-card reveal reveal-delay-1">
+                    <div class="service-icon">⚙️</div>
+                    <h3>CRM Setup & Management</h3>
+                    <p>Full CRM implementation in GoHighLevel, Zoho, or your platform of choice. Pipelines, automations, dashboards — everything configured to match your sales process.</p>
+                </div>
+
+                <div class="service-card reveal reveal-delay-2">
+                    <div class="service-icon">🗺️</div>
+                    <h3>Customer Journey Design</h3>
+                    <p>Map every touchpoint from first click to loyal customer. I design journeys that nurture leads, reduce churn, and turn one-time buyers into repeat clients.</p>
+                </div>
+
+                <div class="service-card reveal reveal-delay-3">
+                    <div class="service-icon">🔄</div>
+                    <h3>Business Process Automation</h3>
+                    <p>Identify bottlenecks in your operations and replace manual work with automated workflows. From invoicing to follow-ups, I build systems that run themselves.</p>
+                </div>
+
+                <div class="service-card reveal reveal-delay-4">
+                    <div class="service-icon">🤖</div>
+                    <h3>AI-Powered Automations</h3>
+                    <p>Leverage the latest AI tools — n8n, Zapier, and custom integrations — to create intelligent automations that learn, adapt, and save you hours every week.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         PROJECTS SECTION
+         To edit: change project titles, descriptions, tags, and links
+         Each card links to a full case study (add your own URLs)
+         ============================================================ -->
+    <section id="projects">
+        <div class="container">
+            <div class="reveal">
+                <span class="section-label">Selected Work</span>
+                <h2 class="section-title">Projects That Speak Results</h2>
+                <p class="section-subtitle">A look at some of the systems and automations I've built for real businesses.</p>
+            </div>
+
+            <div class="projects-grid">
+
+                <!-- PROJECT 1 — EDIT THIS -->
+                <div class="project-card reveal reveal-delay-1">
+                    <div class="project-image">
+                        <span class="project-tag">CRM</span>
+                        <img src="https://i.ibb.co/99JXVGD9/n13ca7nsj9rmt0cwv6xrv3g7gg.png" alt="GoHighLevel CRM Project" style="width:100%;height:100%;object-fit:cover;">
+                    </div>
+                    <div class="project-content">
+                        <h3>GoHighLevel CRM for E-commerce Brand</h3>
+                        <p>Built a complete CRM system with automated lead nurturing, pipeline management, and reporting dashboards — resulting in 40% faster lead response time.</p>
+                        <!-- CHANGE LINK TO YOUR CASE STUDY -->
+                        <a href="#" class="project-link">View Case Study <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+                    </div>
+                </div>
+
+                <!-- PROJECT 2 — EDIT THIS -->
+                <div class="project-card reveal reveal-delay-2">
+                    <div class="project-image">
+                        <span class="project-tag">Automation</span>
+                        <div class="project-image-placeholder">
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+                            <span>Project Screenshot</span>
+                        </div>
+                    </div>
+                    <div class="project-content">
+                        <h3>End-to-End Sales Automation with Zoho</h3>
+                        <p>Designed and implemented an automated sales workflow using Zoho CRM, SalesIQ, and Analytics — cutting manual follow-ups by 70% and boosting conversions.</p>
+                        <a href="#" class="project-link">View Case Study <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+                    </div>
+                </div>
+
+                <!-- PROJECT 3 — EDIT THIS -->
+                <div class="project-card reveal reveal-delay-3">
+                    <div class="project-image">
+                        <span class="project-tag">AI Workflow</span>
+                        <div class="project-image-placeholder">
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+                            <span>Project Screenshot</span>
+                        </div>
+                    </div>
+                    <div class="project-content">
+                        <h3>AI-Powered Lead Scoring with n8n</h3>
+                        <p>Created an intelligent lead scoring system using n8n and AI APIs that automatically qualifies and routes leads — saving the sales team 15+ hours per week.</p>
+                        <a href="#" class="project-link">View Case Study <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+                    </div>
+                </div>
+
+                <!-- PROJECT 4 — EDIT THIS -->
+                <div class="project-card reveal reveal-delay-1">
+                    <div class="project-image">
+                        <span class="project-tag">Journey</span>
+                        <div class="project-image-placeholder">
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+                            <span>Project Screenshot</span>
+                        </div>
+                    </div>
+                    <div class="project-content">
+                        <h3>Customer Journey Redesign for SaaS Startup</h3>
+                        <p>Mapped and rebuilt the complete customer journey from trial to paid conversion, implementing automated onboarding sequences that increased retention by 35%.</p>
+                        <a href="#" class="project-link">View Case Study <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+                    </div>
+                </div>
+
+                <!-- PROJECT 5 — EDIT THIS -->
+                <div class="project-card reveal reveal-delay-2">
+                    <div class="project-image">
+                        <span class="project-tag">Process</span>
+                        <div class="project-image-placeholder">
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+                            <span>Project Screenshot</span>
+                        </div>
+                    </div>
+                    <div class="project-content">
+                        <h3>Business Process Overhaul for Consulting Firm</h3>
+                        <p>Redesigned the entire client intake, project management, and invoicing process using Zoho One — eliminating 20+ hours of weekly admin work.</p>
+                        <a href="#" class="project-link">View Case Study <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- CHANGE YOUR "ALL PROJECTS" LINK HERE -->
+            <div class="projects-cta reveal" style="text-align:center; margin-top:2.5rem;">
+                <a href="#" target="_blank" class="btn-secondary">
+                    View All Projects
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         TESTIMONIALS SECTION
+         To edit: change quotes, names, roles
+         ============================================================ -->
+    <section id="testimonials" class="testimonials-section">
+        <div class="container">
+            <div class="reveal">
+                <span class="section-label">Client Reviews</span>
+                <h2 class="section-title">What Clients Say</h2>
+                <p class="section-subtitle">Real feedback from businesses I've helped build systems for.</p>
+            </div>
+
+            <div class="testimonials-slider-wrapper reveal">
+                <div class="testimonials-slider">
+                    <div class="testimonials-track" id="testimonialsTrack">
+
+                        <!-- TESTIMONIAL 1 — EDIT THIS -->
+                        <div class="testimonial-slide">
+                            <div class="testimonial-card">
+                                <div>
+                                    <div class="testimonial-stars">★★★★★</div>
+                                    <p class="testimonial-text">"Damilare completely transformed how we handle leads. Our CRM went from a mess of spreadsheets to a fully automated system. We're closing deals 3x faster now."</p>
+                                </div>
+                                <div class="testimonial-author">
+                                    <div class="testimonial-avatar">JA</div>
+                                    <div>
+                                        <div class="testimonial-name">John Adeyemi</div>
+                                        <div class="testimonial-role">CEO, TechVentures Ltd</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- TESTIMONIAL 2 — EDIT THIS -->
+                        <div class="testimonial-slide">
+                            <div class="testimonial-card">
+                                <div>
+                                    <div class="testimonial-stars">★★★★★</div>
+                                    <p class="testimonial-text">"The customer journey he designed for us was a game-changer. Our onboarding flow now runs on autopilot and our retention rate jumped significantly within the first quarter."</p>
+                                </div>
+                                <div class="testimonial-author">
+                                    <div class="testimonial-avatar">SO</div>
+                                    <div>
+                                        <div class="testimonial-name">Sarah Okonkwo</div>
+                                        <div class="testimonial-role">Founder, GrowthPath Agency</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- TESTIMONIAL 3 — EDIT THIS -->
+                        <div class="testimonial-slide">
+                            <div class="testimonial-card">
+                                <div>
+                                    <div class="testimonial-stars">★★★★★</div>
+                                    <p class="testimonial-text">"Working with Damilare on our Zoho setup was seamless. He understood our process better than we did and built something that actually works for our team every day."</p>
+                                </div>
+                                <div class="testimonial-author">
+                                    <div class="testimonial-avatar">MK</div>
+                                    <div>
+                                        <div class="testimonial-name">Michael Karim</div>
+                                        <div class="testimonial-role">Operations Director, ScaleUp Inc</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- TESTIMONIAL 4 — ADD MORE TESTIMONIALS BY COPYING THIS BLOCK -->
+                        <div class="testimonial-slide">
+                            <div class="testimonial-card">
+                                <div>
+                                    <div class="testimonial-stars">★★★★★</div>
+                                    <p class="testimonial-text">"I had no idea how much time we were wasting until Damilare automated our entire client intake and invoicing process. Our team now focuses on delivering, not admin work."</p>
+                                </div>
+                                <div class="testimonial-author">
+                                    <div class="testimonial-avatar">AL</div>
+                                    <div>
+                                        <div class="testimonial-name">Amina Lawal</div>
+                                        <div class="testimonial-role">Managing Partner, BrightEdge Consulting</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Slider Controls -->
+                <div class="slider-controls">
+                    <button class="slider-btn" id="sliderPrev" aria-label="Previous testimonial">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                    </button>
+                    <div class="slider-dots" id="sliderDots"></div>
+                    <button class="slider-btn" id="sliderNext" aria-label="Next testimonial">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         CONTACT / CTA SECTION
+         ============================================================ -->
+    <section id="contact" class="cta-section">
+        <div class="container">
+            <div class="cta-content reveal">
+                <span class="section-label">Let's Work Together</span>
+                <h2 class="section-title">Ready to automate your business?</h2>
+                <p class="section-subtitle">Book a free strategy call and let's talk about building the systems your business needs to scale.</p>
+                <div class="cta-buttons">
+                    <!-- CHANGE YOUR BOOKING LINK HERE -->
+                    <a href="https://cal.com/dami-digital-market" target="_blank" class="btn-primary">
+                        Book a Free Call
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </a>
+                    <a href="#projects" class="btn-secondary">View My Work</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         FOOTER
+         To edit: change social links, copyright text
+         ============================================================ -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-left">
+                    <strong>Damilare Babalola</strong><br>
+                    &copy; 2026 — All rights reserved.
+                </div>
+
+                <div class="footer-socials">
+                    <!-- TWITTER / X -->
+                    <a href="https://x.com/Dami_Market" target="_blank" class="social-icon" aria-label="Twitter">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                    </a>
+                    <!-- LINKEDIN -->
+                    <a href="https://www.linkedin.com/in/damidigitalmarket" target="_blank" class="social-icon" aria-label="LinkedIn">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                    </a>
+                    <!-- INSTAGRAM -->
+                    <a href="https://www.instagram.com/damidigital_market/" target="_blank" class="social-icon" aria-label="Instagram">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+                    </a>
+                    <!-- FACEBOOK -->
+                    <a href="https://www.facebook.com/itz.oluwadamilare.9277" target="_blank" class="social-icon" aria-label="Facebook">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                    </a>
+                    <!-- TIKTOK -->
+                    <a href="https://tiktok.com/@damidigitalmarket" target="_blank" class="social-icon" aria-label="TikTok">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>
+                    </a>
+                    <!-- UPWORK -->
+                    <a href="https://www.upwork.com/freelancers/~01b8622274bfad81b9?viewMode=1" target="_blank" class="social-icon" aria-label="Upwork">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.561 13.158c-1.102 0-2.135-.467-3.074-1.227l.228-1.076.008-.042c.207-1.143.849-3.06 2.839-3.06 1.492 0 2.703 1.212 2.703 2.703-.001 1.489-1.212 2.702-2.704 2.702zm0-8.14c-2.539 0-4.51 1.649-5.31 4.366-1.22-1.834-2.148-4.036-2.687-5.892H7.828v7.112c-.002 1.406-1.141 2.546-2.547 2.548-1.405-.002-2.543-1.143-2.545-2.548V3.492H0v7.112c0 2.914 2.37 5.303 5.281 5.303 2.913 0 5.283-2.389 5.283-5.303v-1.19c.529 1.107 1.182 2.229 1.974 3.221l-1.673 7.873h2.797l1.213-5.71c1.063.679 2.285 1.109 3.686 1.109 3 0 5.439-2.452 5.439-5.45 0-3-2.439-5.439-5.439-5.439z"/></svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ============================================================
+         JAVASCRIPT
+         ============================================================ -->
+    <script>
+        // ---- THEME TOGGLE ----
+        const themeToggle = document.getElementById('themeToggle');
+        const html = document.documentElement;
+
+        themeToggle.addEventListener('click', () => {
+            const current = html.getAttribute('data-theme');
+            const next = current === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', next);
+            try { localStorage.setItem('theme', next); } catch(e) {}
+        });
+
+        // Load saved theme
+        try {
+            const saved = localStorage.getItem('theme');
+            if (saved) html.setAttribute('data-theme', saved);
+        } catch(e) {}
+
+        // ---- NAVBAR SCROLL EFFECT ----
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            navbar.classList.toggle('scrolled', window.scrollY > 50);
+        });
+
+        // ---- MOBILE NAV ----
+        const navHamburger = document.getElementById('navHamburger');
+        const mobileNav = document.getElementById('mobileNav');
+        const mobileNavClose = document.getElementById('mobileNavClose');
+
+        navHamburger.addEventListener('click', () => mobileNav.classList.add('active'));
+        mobileNavClose.addEventListener('click', () => mobileNav.classList.remove('active'));
+        function closeMobileNav() { mobileNav.classList.remove('active'); }
+
+        // ---- SCROLL REVEAL ANIMATION ----
+        const observerOptions = { threshold: 0.1, rootMargin: '0px 0px -40px 0px' };
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+        // ---- SMOOTH SCROLL FOR NAV LINKS ----
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    e.preventDefault();
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+
+        // ---- ANIMATED NUMBER COUNTER ----
+        function animateCounters() {
+            const counters = document.querySelectorAll('.trust-number[data-target]');
+            counters.forEach(counter => {
+                if (counter.dataset.animated) return;
+                counter.dataset.animated = 'true';
+
+                const target = parseInt(counter.dataset.target);
+                const suffix = counter.dataset.suffix || '';
+                const duration = 3500; // ms — CHANGE THIS TO SPEED UP OR SLOW DOWN THE COUNTING
+                const startTime = performance.now();
+
+                function easeOutCubic(t) {
+                    return 1 - Math.pow(1 - t, 3);
+                }
+
+                function updateCounter(currentTime) {
+                    const elapsed = currentTime - startTime;
+                    const progress = Math.min(elapsed / duration, 1);
+                    const easedProgress = easeOutCubic(progress);
+                    const currentValue = Math.floor(easedProgress * target);
+
+                    counter.textContent = currentValue + suffix;
+
+                    if (progress < 1) {
+                        requestAnimationFrame(updateCounter);
+                    } else {
+                        counter.textContent = target + suffix;
+                    }
+                }
+
+                requestAnimationFrame(updateCounter);
+            });
+        }
+
+        // Trigger counter when hero trust section is visible
+        const trustSection = document.getElementById('heroTrust');
+        if (trustSection) {
+            const counterObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        animateCounters();
+                        counterObserver.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.3 });
+            counterObserver.observe(trustSection);
+        }
+
+        // ---- TESTIMONIALS SLIDER ----
+        const track = document.getElementById('testimonialsTrack');
+        const slides = track ? track.querySelectorAll('.testimonial-slide') : [];
+        const prevBtn = document.getElementById('sliderPrev');
+        const nextBtn = document.getElementById('sliderNext');
+        const dotsContainer = document.getElementById('sliderDots');
+        let currentSlide = 0;
+        let autoSlideInterval;
+        let isPaused = false;
+
+        // Create dots
+        if (slides.length && dotsContainer) {
+            slides.forEach((_, i) => {
+                const dot = document.createElement('button');
+                dot.classList.add('slider-dot');
+                if (i === 0) dot.classList.add('active');
+                dot.setAttribute('aria-label', `Go to testimonial ${i + 1}`);
+                dot.addEventListener('click', () => { goToSlide(i); resetAutoSlide(); });
+                dotsContainer.appendChild(dot);
+            });
+        }
+
+        function goToSlide(index) {
+            currentSlide = index;
+            if (track) track.style.transform = `translateX(-${currentSlide * 100}%)`;
+            const dots = dotsContainer ? dotsContainer.querySelectorAll('.slider-dot') : [];
+            dots.forEach((dot, i) => {
+                dot.classList.toggle('active', i === currentSlide);
+            });
+        }
+
+        function nextSlide() {
+            goToSlide((currentSlide + 1) % slides.length);
+        }
+
+        function prevSlide() {
+            goToSlide((currentSlide - 1 + slides.length) % slides.length);
+        }
+
+        if (nextBtn) nextBtn.addEventListener('click', () => { nextSlide(); resetAutoSlide(); });
+        if (prevBtn) prevBtn.addEventListener('click', () => { prevSlide(); resetAutoSlide(); });
+
+        // Auto-slide every 7 seconds (slow and smooth)
+        function startAutoSlide() {
+            autoSlideInterval = setInterval(() => {
+                if (!isPaused) nextSlide();
+            }, 7000);
+        }
+        function resetAutoSlide() {
+            clearInterval(autoSlideInterval);
+            startAutoSlide();
+        }
+        if (slides.length > 1) startAutoSlide();
+
+        // Pause on hover — testimonials stop sliding when mouse is over them
+        const sliderWrapper = document.querySelector('.testimonials-slider-wrapper');
+        if (sliderWrapper) {
+            sliderWrapper.addEventListener('mouseenter', () => { isPaused = true; });
+            sliderWrapper.addEventListener('mouseleave', () => { isPaused = false; });
+        }
+
+        // Swipe support for mobile
+        let touchStartX = 0;
+        let touchEndX = 0;
+        const slider = document.querySelector('.testimonials-slider');
+        if (slider) {
+            slider.addEventListener('touchstart', (e) => { touchStartX = e.changedTouches[0].screenX; }, { passive: true });
+            slider.addEventListener('touchend', (e) => {
+                touchEndX = e.changedTouches[0].screenX;
+                const diff = touchStartX - touchEndX;
+                if (Math.abs(diff) > 50) {
+                    if (diff > 0) nextSlide();
+                    else prevSlide();
+                    resetAutoSlide();
+                }
+            }, { passive: true });
+        }
+    </script>
+
+</body>
+</html>
