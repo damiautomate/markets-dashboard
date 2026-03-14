@@ -186,11 +186,13 @@ async function loadProjectBySlug(slug){const snap=await db.collection('projects'
 async function uploadFile(file,projId){const path=`updates/${projId}/${genId()}_${file.name}`;const ref=storage.ref(path);const snap=await ref.put(file);return await snap.ref.getDownloadURL()}
 function showLightbox(url,isV){const lb=document.createElement('div');lb.className='lightbox';lb.innerHTML=isV?`<video src="${url}" controls autoplay></video>`:`<img src="${url}">`;lb.onclick=()=>lb.remove();document.body.appendChild(lb)}
 
-function render(){const app=$('#app');switch(state.view){case'loading':app.innerHTML='<div class="loading"><div class="spinner"></div>Loading...</div>';break;case'login':renderLogin();break;case'admin':renderAdmin();break;case'client-gate':renderClientGate();break;case'client':renderClientView();break}}
+function render(){const app=$('#app');switch(state.view){case'loading':app.innerHTML='<div class="loading"><div class="spinner"></div>Loading...</div>';break;case'login':renderLogin();break;case'admin':renderAdmin();break;case'client-gate':renderClientGate();break;case'client-name':renderClientName();break;case'client':renderClientView();break}}
 
 function renderLogin(){$('#app').innerHTML=`<div class="gate"><div class="gate-card"><div class="logo" style="margin:0 auto 20px;width:44px;height:44px;font-size:18px">D</div><div style="font-family:var(--fd);font-size:1.15rem;font-weight:700;margin-bottom:8px">Admin Login</div><div style="font-size:.86rem;color:var(--tm);margin-bottom:22px">Sign in to manage your projects</div><input class="gate-input" id="le" type="email" placeholder="Email"><input class="gate-input" id="lp" type="password" placeholder="Password"><button class="btn btn-a gate-btn" id="lb">Sign In</button><div id="lerr" class="gate-error" style="display:none"></div></div></div>`;$('#lb').onclick=async()=>{const e=$('#le').value.trim(),p=$('#lp').value;if(!e||!p)return;try{$('#lb').textContent='Signing in...';await auth.signInWithEmailAndPassword(e,p)}catch(er){$('#lerr').style.display='block';$('#lerr').textContent='Invalid email or password';$('#lb').textContent='Sign In'}};$('#lp').onkeydown=e=>{if(e.key==='Enter')$('#lb').click()}}
 
-function renderClientGate(){const p=state.clientProject;if(!p)return;if(!p.password){state.view='client';render();return}$('#app').innerHTML=`<div class="gate"><div class="gate-card"><div class="logo" style="margin:0 auto 20px;width:44px;height:44px;font-size:18px">D</div><div style="font-family:var(--fd);font-size:1.15rem;font-weight:700;margin-bottom:8px">${escH(p.title)}</div><div style="font-size:.86rem;color:var(--tm);margin-bottom:22px">Enter the project password</div><input class="gate-input" id="gp" type="password" placeholder="Project password"><button class="btn btn-a gate-btn" id="gb">View Project</button><div id="gerr" class="gate-error" style="display:none"></div></div></div>`;$('#gb').onclick=()=>{if($('#gp').value===p.password){state.view='client';render()}else{$('#gerr').style.display='block';$('#gerr').textContent='Incorrect password.'}};$('#gp').onkeydown=e=>{if(e.key==='Enter')$('#gb').click()}}
+function renderClientGate(){const p=state.clientProject;if(!p)return;if(!p.password){state.view=getClientName()?'client':'client-name';render();return}$('#app').innerHTML=`<div class="gate"><div class="gate-card"><div class="logo" style="margin:0 auto 20px;width:44px;height:44px;font-size:18px">D</div><div style="font-family:var(--fd);font-size:1.15rem;font-weight:700;margin-bottom:8px">${escH(p.title)}</div><div style="font-size:.86rem;color:var(--tm);margin-bottom:22px">Enter the project password</div><input class="gate-input" id="gp" type="password" placeholder="Project password"><button class="btn btn-a gate-btn" id="gb">View Project</button><div id="gerr" class="gate-error" style="display:none"></div></div></div>`;$('#gb').onclick=()=>{if($('#gp').value===p.password){state.view=getClientName()?'client':'client-name';render()}else{$('#gerr').style.display='block';$('#gerr').textContent='Incorrect password.'}};$('#gp').onkeydown=e=>{if(e.key==='Enter')$('#gb').click()}}
+
+function renderClientName(){const p=state.clientProject;if(!p)return;if(getClientName()){state.view='client';render();return}$('#app').innerHTML=`<div class="gate"><div class="gate-card"><div class="logo" style="margin:0 auto 20px;width:44px;height:44px;font-size:18px">D</div><div style="font-family:var(--fd);font-size:1.15rem;font-weight:700;margin-bottom:8px">Welcome</div><div style="font-size:.86rem;color:var(--tm);margin-bottom:22px">Please enter your name to continue.<br>This lets us know who's commenting and reacting.</div><input class="gate-input" id="cn" type="text" placeholder="Your name"><button class="btn btn-a gate-btn" id="cb">Continue</button></div></div>`;$('#cb').onclick=()=>{const n=$('#cn').value.trim();if(!n)return;setClientName(n);state.view='client';render()};$('#cn').onkeydown=e=>{if(e.key==='Enter')$('#cb').click()}}
 
 // ═══ REACTIONS (single-select per user) ═══
 function reactionsH(reactions,updateId,projId,isAdmin){
@@ -210,51 +212,48 @@ function reactionsH(reactions,updateId,projId,isAdmin){
   h+='</div>';return h;
 }
 
-// ═══ COMMENTS (name prompt inline on first comment) ═══
+// ═══ COMMENTS ═══
 function commentsH(items,parentType,parentId,projId,isAdmin){
   const list=(items||[]).map(c=>{
     const cls=c.role==='admin'?'admin':'client';
     return`<div class="comment"><div class="comment-avatar ${cls}">${(c.author||'?')[0].toUpperCase()}</div><div class="comment-content"><div class="comment-meta"><strong>${escH(c.author||'Unknown')}</strong> &middot; ${fmtDate(c.date)}</div><div class="comment-text">${escH(c.text)}</div></div></div>`;
   }).join('');
   const count=(items||[]).length;
-  // For client: if no name saved, show name prompt instead of input
-  const hasName=isAdmin||!!getClientName();
-  const inputArea=hasName
-    ?`<div class="comment-input-row"><input class="comment-input" data-type="${parentType}" data-id="${parentId}" data-proj="${projId}" placeholder="Write a comment..."><button class="comment-send" data-type="${parentType}" data-id="${parentId}" data-proj="${projId}">Send</button></div>`
-    :`<div class="name-prompt" data-type="${parentType}" data-id="${parentId}" data-proj="${projId}"><div class="name-prompt-label">Enter your name to comment:</div><div class="name-prompt-row"><input class="comment-input name-input" placeholder="Your name..."><button class="comment-send name-save-btn">Continue</button></div></div>`;
-  return`<div class="comments-section"><button class="toggle-comments" data-type="${parentType}" data-id="${parentId}">\uD83D\uDCAC ${count} comment${count!==1?'s':''}</button><div class="comments-body" data-for="${parentType}-${parentId}" style="display:none">${list}${inputArea}</div></div>`;
+  const nameVal=getClientName();
+  const placeholder=isAdmin?'Write a comment...':(nameVal?'Write a comment...':'Write a comment...');
+  return`<div class="comments-section"><button class="toggle-comments" data-type="${parentType}" data-id="${parentId}">\uD83D\uDCAC ${count} comment${count!==1?'s':''}</button><div class="comments-body" data-for="${parentType}-${parentId}" style="display:none">${list}<div class="comment-input-row"><input class="comment-input" data-type="${parentType}" data-id="${parentId}" data-proj="${projId}" placeholder="${placeholder}"><button class="comment-send" data-type="${parentType}" data-id="${parentId}" data-proj="${projId}">Send</button></div></div></div>`;
 }
 
 // ═══ BIND INTERACTIONS ═══
 function bindInteractions(projId,isAdmin){
   // Toggle comments
   $$('.toggle-comments').forEach(btn=>{btn.onclick=()=>{const b=$(`[data-for="${btn.dataset.type}-${btn.dataset.id}"]`);if(b)b.style.display=b.style.display==='none'?'block':'none'}});
-  // Name save (client only)
-  $$('.name-save-btn').forEach(btn=>{btn.onclick=()=>{const prompt=btn.closest('.name-prompt');const input=prompt.querySelector('.name-input');const n=input.value.trim();if(!n)return;setClientName(n);// Re-render current tab to replace all name prompts with inputs
-    if(!isAdmin){renderCTab()}else{renderATab()}}});
-  // Send comment
-  $$('.comment-send:not(.name-save-btn)').forEach(btn=>{
+  // Send comment — asks for name on first send if client
+  $$('.comment-send').forEach(btn=>{
     btn.onclick=async()=>{
       const input=btn.previousElementSibling;const text=input.value.trim();if(!text)return;
-      const role=isAdmin?'admin':'client';const author=isAdmin?'Damilare':getClientName();
-      if(!author){return}// shouldn't happen since we hide input if no name
+      const role=isAdmin?'admin':'client';
+      const author=isAdmin?'Damilare':getClientName();
+      if(!author)return;
       const comment={id:genId(),text,author,role,date:new Date().toISOString().slice(0,10)};
-      btn.textContent='...';
-      const proj=isAdmin?state.projects.find(p=>p.id===projId):state.clientProject;
-      if(btn.dataset.type==='update'){
-        const ups=[...(proj.updates||[])];const idx=ups.findIndex(u=>u.id===btn.dataset.id);
-        if(idx>=0){ups[idx].comments=[...(ups[idx].comments||[]),comment];await db.collection('projects').doc(projId).update({updates:ups});if(!isAdmin){state.clientProject.updates=ups;renderCTab()}else render()}
-      }else if(btn.dataset.type==='phase'){
-        const phs=[...(proj.phases||[])];const idx=phs.findIndex(p=>p.id===btn.dataset.id);
-        if(idx>=0){phs[idx].comments=[...(phs[idx].comments||[]),comment];await db.collection('projects').doc(projId).update({phases:phs});if(!isAdmin){state.clientProject.phases=phs;renderCTab()}else render()}
-      }
+      btn.textContent='...';btn.disabled=true;
+      try{
+        const proj=isAdmin?state.projects.find(p=>p.id===projId):state.clientProject;
+        if(btn.dataset.type==='update'){
+          const ups=[...(proj.updates||[])];const idx=ups.findIndex(u=>u.id===btn.dataset.id);
+          if(idx>=0){ups[idx].comments=[...(ups[idx].comments||[]),comment];await db.collection('projects').doc(projId).update({updates:ups});if(!isAdmin){state.clientProject.updates=ups;renderCTab()}else render()}
+        }else if(btn.dataset.type==='phase'){
+          const phs=[...(proj.phases||[])];const idx=phs.findIndex(p=>p.id===btn.dataset.id);
+          if(idx>=0){phs[idx].comments=[...(phs[idx].comments||[]),comment];await db.collection('projects').doc(projId).update({phases:phs});if(!isAdmin){state.clientProject.phases=phs;renderCTab()}else render()}
+        }
+      }catch(e){console.error('Comment save error:',e);alert('Could not save comment. Please try again.');btn.textContent='Send';btn.disabled=false}
     }
   });
   // Reactions (single-select toggle)
   $$('.react-btn').forEach(btn=>{
     btn.onclick=async()=>{
-      const userId=isAdmin?'__admin__':(getClientName()||'');
-      if(!userId&&!isAdmin)return;// no name yet
+      let userId=isAdmin?'__admin__':getClientName();
+      if(!userId&&!isAdmin)return;
       const proj=isAdmin?state.projects.find(p=>p.id===projId):state.clientProject;
       const ups=[...(proj.updates||[])];const idx=ups.findIndex(u=>u.id===btn.dataset.uid);if(idx<0)return;
       const r=JSON.parse(JSON.stringify(ups[idx].reactions||{}));
@@ -387,7 +386,7 @@ function showExtModal(proj){showModal('Request Extension',`<div class="fg"><labe
 
 // ═══ INIT ═══
 const urlP=getUrlP();
-if(urlP){(async()=>{const p=await loadProjectBySlug(urlP);if(p){state.clientProject=p;state.view=p.password?'client-gate':'client'}else{state.view='client';state.clientProject={title:'Not Found',clientName:'',description:'This project link is invalid.',status:'upcoming',phases:[],updates:[],startDate:'',endDate:''}}render()})()}
+if(urlP){(async()=>{const p=await loadProjectBySlug(urlP);if(p){state.clientProject=p;state.view='client-gate'}else{state.view='client';state.clientProject={title:'Not Found',clientName:'',description:'This project link is invalid.',status:'upcoming',phases:[],updates:[],startDate:'',endDate:''}}render()})()}
 else{auth.onAuthStateChanged(u=>{state.user=u;if(u){state.view='admin';listenProjects()}else{state.view='login';if(state.unsub){state.unsub();state.unsub=null}state.projects=[];render()}})}
 </script>
 </body>
