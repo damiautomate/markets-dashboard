@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Project Portal — Dami Market</title>
+<meta name="theme-color" content="#0A0A0F">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
+<style>
+:root{--a:#00D4AA;--ad:rgba(0,212,170,.13);--ag:rgba(0,212,170,.25);--ab:#33EACC;--bg:#0A0A0F;--bg2:#12121A;--bgc:#16161F;--t:#E8E8ED;--tm:#8888A0;--bd:#2A2A3A;--y:#FBBF24;--yd:rgba(251,191,36,.12);--r:#EF4444;--rd:rgba(239,68,68,.12);--fd:'Syne',sans-serif;--fb:'DM Sans',sans-serif}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--fb);background:var(--bg);color:var(--t);min-height:100vh;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:var(--bd);border-radius:10px}
+.hdr{position:sticky;top:0;z-index:100;padding:.75rem 1rem;background:rgba(10,10,15,.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between}
+.hdr-l{display:flex;align-items:center;gap:10px;min-width:0}.hdr-r{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.logo{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--a),#00A888);display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-weight:800;font-size:13px;color:#0A0A0F;box-shadow:0 2px 12px var(--ag);flex-shrink:0}
+.brand{font-family:var(--fd);font-weight:700;font-size:.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.brand span{color:var(--a)}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:.5rem 1rem;border-radius:8px;font-family:var(--fb);font-size:.8rem;font-weight:600;border:none;cursor:pointer;transition:all .2s;white-space:nowrap}
+.btn-a{background:var(--a);color:#0A0A0F}.btn-a:hover{transform:translateY(-1px);box-shadow:0 4px 20px var(--ag)}
+.btn-g{background:transparent;color:var(--tm);border:1px solid var(--bd)}.btn-g:hover{border-color:var(--a);color:var(--a);background:var(--ad)}
+.btn-s{padding:.35rem .7rem;font-size:.76rem}
+.btn-d{background:var(--rd);color:var(--r);border:1px solid transparent}.btn-d:hover{border-color:var(--r)}
+.btn-y{background:var(--yd);color:var(--y);border:1px solid transparent}.btn-y:hover{border-color:var(--y)}
+.btn[disabled]{opacity:.5;pointer-events:none}
+.layout{display:flex;height:calc(100vh - 49px)}
+.sidebar{width:280px;border-right:1px solid var(--bd);background:var(--bg2);display:flex;flex-direction:column;flex-shrink:0}
+.sb-hdr{padding:14px 16px;border-bottom:1px solid var(--bd)}
+.sb-title{font-family:var(--fd);font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--tm)}
+.sb-list{flex:1;overflow-y:auto;padding:8px}
+.pi{padding:12px;border-radius:10px;cursor:pointer;margin-bottom:4px;transition:all .2s;border:1px solid transparent}
+.pi:hover{background:var(--bgc)}.pi.active{background:var(--bgc);border-color:var(--a)}
+.pi-title{font-weight:600;font-size:.86rem;margin-bottom:3px}.pi-client{font-size:.74rem;color:var(--tm);margin-bottom:8px}
+.pi-bar{height:3px;border-radius:2px;background:var(--bd);overflow:hidden}.pi-fill{height:100%;border-radius:2px;background:var(--a);transition:width .6s}
+.pi-meta{display:flex;justify-content:space-between;align-items:center;margin-top:6px}
+.pi-pct{font-size:.72rem;font-weight:700;color:var(--a);font-family:var(--fd)}
+.dot-status{display:flex;align-items:center;gap:4px;font-size:.7rem;color:var(--tm)}.dot-status .dot{width:6px;height:6px;border-radius:50%;display:inline-block}
+.main{flex:1;overflow-y:auto;background:var(--bg)}.inner{max-width:900px;margin:0 auto;padding:28px 24px 60px}
+.pj-badge{display:inline-flex;align-items:center;gap:6px;padding:.3rem .8rem;border-radius:50px;font-size:.74rem;font-weight:600;margin-bottom:12px}
+.pj-title{font-family:var(--fd);font-size:1.6rem;font-weight:800;letter-spacing:-.03em;margin-bottom:6px;line-height:1.2}
+.pj-client{font-size:.9rem;color:var(--tm);margin-bottom:14px}.pj-desc{font-size:.88rem;color:var(--tm);line-height:1.7;max-width:700px;margin-bottom:18px}
+.pj-dates{display:flex;gap:20px;font-size:.8rem;color:var(--tm);flex-wrap:wrap}.pj-dates strong{color:var(--t)}
+.prog-sec{margin-bottom:32px}.prog-top{display:flex;justify-content:space-between;margin-bottom:8px}
+.prog-label{font-family:var(--fd);font-size:.76rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--tm)}
+.prog-pct{font-family:var(--fd);font-size:1.2rem;font-weight:800;color:var(--a)}
+.prog-track{height:8px;border-radius:4px;background:var(--bd);overflow:hidden}
+.prog-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--a),var(--ab));transition:width 1s ease}
+.tabs{display:flex;border-bottom:1px solid var(--bd);margin-bottom:24px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.tab{padding:10px 16px;background:none;border:none;cursor:pointer;font-family:var(--fb);font-size:.82rem;font-weight:600;color:var(--tm);border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap;flex-shrink:0}
+.tab:hover{color:var(--t)}.tab.active{color:var(--a);border-bottom-color:var(--a)}
+.card{background:var(--bgc);border:1px solid var(--bd);border-radius:12px;padding:18px;margin-bottom:12px;transition:border-color .2s}.card:hover{border-color:var(--a)}
+.card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;gap:8px}
+.card-title{font-family:var(--fd);font-weight:700;font-size:.92rem}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:50px;font-size:.68rem;font-weight:600;flex-shrink:0}
+.card-body{font-size:.84rem;color:var(--tm);line-height:1.7}
+.card-impact{margin-top:12px;padding:12px 14px;background:var(--ad);border-left:3px solid var(--a);border-radius:0 8px 8px 0}
+.impact-label{font-weight:700;color:var(--a);font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.impact-text{font-size:.82rem;line-height:1.6;color:var(--t)}.card-date{font-size:.74rem;color:var(--tm);margin-top:10px}
+/* Timeline / Activity */
+.timeline{position:relative;padding-left:24px}.timeline::before{content:'';position:absolute;left:7px;top:8px;bottom:8px;width:2px;background:var(--bd)}
+.tl-item{position:relative;margin-bottom:22px}
+.tl-dot{position:absolute;left:-24px;top:4px;width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:8px;z-index:1}
+.tl-date{font-size:.72rem;color:var(--tm);margin-bottom:4px}.tl-title{font-weight:700;font-size:.88rem;margin-bottom:4px}
+.tl-body{font-size:.82rem;color:var(--tm);line-height:1.65}
+.tl-tag{display:inline-flex;font-size:.68rem;color:var(--a);font-weight:600;background:var(--ad);padding:2px 8px;border-radius:4px;margin-top:8px}
+.tl-media{margin-top:10px;display:flex;flex-wrap:wrap;gap:8px}
+.tl-media img,.tl-media video{border-radius:8px;border:1px solid var(--bd);max-width:100%;max-height:240px;object-fit:cover;cursor:pointer;transition:border-color .2s}
+/* Reactions */
+.reactions{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap;align-items:center}
+.react-btn{padding:3px 10px;border-radius:20px;border:1px solid var(--bd);background:transparent;cursor:pointer;font-size:.76rem;display:flex;align-items:center;gap:4px;transition:all .2s;color:var(--tm)}
+.react-btn:hover{border-color:var(--a);background:var(--ad);color:var(--a)}
+.react-btn.active{border-color:var(--a);background:var(--ad);color:var(--a)}
+/* Comments */
+.comments-section{margin-top:12px;border-top:1px solid var(--bd);padding-top:10px}
+.comment{display:flex;gap:10px;margin-bottom:10px}
+.comment-avatar{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;color:#0A0A0F;flex-shrink:0}
+.comment-avatar.admin{background:var(--a)}.comment-avatar.client{background:var(--y)}
+.comment-content{flex:1;min-width:0}
+.comment-meta{font-size:.7rem;color:var(--tm);margin-bottom:2px}.comment-meta strong{color:var(--t)}
+.comment-text{font-size:.8rem;color:var(--t);line-height:1.5}
+.comment-input-row{display:flex;gap:8px;margin-top:8px}
+.comment-input{flex:1;padding:8px 12px;border-radius:8px;border:1px solid var(--bd);background:var(--bg);color:var(--t);font-family:var(--fb);font-size:.82rem;outline:none;min-width:0}
+.comment-input:focus{border-color:var(--a)}
+.comment-send{padding:8px 14px;border-radius:8px;background:var(--a);color:#0A0A0F;border:none;cursor:pointer;font-weight:600;font-size:.78rem;flex-shrink:0}
+.toggle-comments{background:none;border:none;color:var(--tm);font-size:.74rem;cursor:pointer;padding:4px 0;font-family:var(--fb);transition:color .2s}
+.toggle-comments:hover{color:var(--a)}
+/* Change request badge */
+.change-req{margin-top:10px;padding:10px 12px;border-radius:8px;border:1px solid rgba(251,191,36,.3);background:var(--yd)}
+.change-req-title{font-size:.74rem;font-weight:700;color:var(--y);margin-bottom:4px}
+.change-req-text{font-size:.8rem;color:var(--t);line-height:1.5}
+.change-req-meta{font-size:.7rem;color:var(--tm);margin-top:4px}
+.change-req-actions{display:flex;gap:6px;margin-top:8px}
+/* Gantt */
+.gantt-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.gantt-label{width:140px;flex-shrink:0;font-size:.78rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gantt-track{flex:1;height:24px;background:var(--bd);border-radius:6px;position:relative;overflow:hidden}
+.gantt-bar{position:absolute;top:3px;bottom:3px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;color:#0A0A0F;transition:all .6s}
+/* Extension */
+.ext-banner{padding:16px 18px;border-radius:12px;margin-bottom:20px;border:1px solid;position:relative}
+.ext-banner.pending{background:var(--yd);border-color:rgba(251,191,36,.3)}
+.ext-banner.accepted{background:var(--ad);border-color:rgba(0,212,170,.3)}
+.ext-banner.rejected{background:var(--rd);border-color:rgba(239,68,68,.3)}
+.ext-banner-title{font-family:var(--fd);font-weight:700;font-size:.88rem;margin-bottom:6px}
+.ext-banner-body{font-size:.82rem;color:var(--tm);line-height:1.6;margin-bottom:10px}
+.ext-close{background:none;border:none;color:var(--tm);font-size:1.1rem;cursor:pointer;padding:4px 8px;position:absolute;top:10px;right:10px}
+/* Gate */
+.gate{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--bg);position:relative;overflow:hidden;padding:20px}
+.gate::before{content:'';position:absolute;inset:0;background-image:linear-gradient(var(--bd) 1px,transparent 1px),linear-gradient(90deg,var(--bd) 1px,transparent 1px);background-size:60px 60px;opacity:.2}
+.gate::after{content:'';position:absolute;top:20%;right:-10%;width:500px;height:500px;background:radial-gradient(circle,var(--ag) 0%,transparent 70%);border-radius:50%}
+.gate-card{position:relative;z-index:1;background:var(--bgc);border:1px solid var(--bd);border-radius:16px;padding:36px 32px;max-width:420px;width:100%;text-align:center}
+.gate-input{width:100%;padding:12px 16px;border-radius:10px;border:1px solid var(--bd);background:var(--bg);color:var(--t);font-family:var(--fb);font-size:.88rem;outline:none;margin-bottom:10px}.gate-input:focus{border-color:var(--a)}
+.gate-btn{width:100%;padding:12px;border-radius:10px;font-size:.9rem}
+.gate-error{color:var(--r);font-size:.8rem;margin-top:10px}
+/* Modal */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);z-index:200;display:flex;align-items:center;justify-content:center;padding:16px}
+.modal{background:var(--bgc);border:1px solid var(--bd);border-radius:16px;padding:24px;width:100%;max-width:560px;max-height:85vh;overflow-y:auto}
+.modal-title{font-family:var(--fd);font-size:1.05rem;font-weight:700;margin-bottom:18px}
+.fg{margin-bottom:14px}
+.fl{display:block;font-size:.76rem;font-weight:600;color:var(--tm);margin-bottom:5px;text-transform:uppercase;letter-spacing:.05em}
+.fi{width:100%;padding:10px 12px;border-radius:8px;border:1px solid var(--bd);background:var(--bg);color:var(--t);font-family:var(--fb);font-size:.86rem;outline:none}.fi:focus{border-color:var(--a)}
+textarea.fi{resize:vertical;min-height:80px}select.fi{cursor:pointer}
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:10px}.fa{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}
+.file-upload{border:2px dashed var(--bd);border-radius:10px;padding:20px;text-align:center;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+.file-upload:hover{border-color:var(--a);background:var(--ad)}.file-upload.has-file{border-color:var(--a);border-style:solid}
+.file-upload input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer}
+.file-preview{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.file-preview img,.file-preview video{height:60px;border-radius:6px;border:1px solid var(--bd);object-fit:cover}
+.upload-progress{margin-top:8px;height:4px;border-radius:2px;background:var(--bd);overflow:hidden}.upload-progress-fill{height:100%;background:var(--a);transition:width .3s}
+.share-box{display:flex;align-items:center;gap:8px;margin-top:10px;padding:10px 12px;background:var(--bg);border:1px solid var(--bd);border-radius:8px}
+.share-box input{flex:1;background:transparent;border:none;color:var(--t);font-family:var(--fb);font-size:.8rem;outline:none;min-width:0}
+.copied{color:var(--a);font-size:.74rem;margin-top:6px}
+.empty{text-align:center;padding:50px 20px}.empty-icon{font-size:2.5rem;margin-bottom:14px;opacity:.3}
+.empty-t{font-family:var(--fd);font-weight:700;margin-bottom:8px}.empty-s{font-size:.86rem;color:var(--tm);margin-bottom:18px}
+.footer{text-align:center;padding:20px;font-size:.74rem;color:var(--tm);border-top:1px solid var(--bd);margin-top:24px}.footer strong{color:var(--t)}
+.loading{display:flex;align-items:center;justify-content:center;min-height:100vh;font-family:var(--fd);color:var(--a);font-size:1rem;font-weight:700}
+.spinner{width:22px;height:22px;border:3px solid var(--bd);border-top-color:var(--a);border-radius:50%;animation:spin .8s linear infinite;margin-right:10px}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}.anim{animation:fadeIn .5s ease both}
+.lightbox{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.92);display:flex;align-items:center;justify-content:center;cursor:zoom-out;padding:20px}
+.lightbox img,.lightbox video{max-width:95%;max-height:90vh;border-radius:8px;object-fit:contain}
+.hamburger{display:none;background:none;border:none;cursor:pointer;padding:4px;flex-shrink:0}
+.hamburger span{display:block;width:20px;height:2px;background:var(--t);margin:4px 0;border-radius:2px}
+.mobile-drawer{display:none;position:fixed;top:49px;left:0;right:0;bottom:0;z-index:150;background:var(--bg2);overflow-y:auto;padding:8px}.mobile-drawer.open{display:block}
+/* Client name bar */
+.client-bar{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg2);border:1px solid var(--bd);border-radius:10px;margin-bottom:20px}
+.client-bar-avatar{width:30px;height:30px;border-radius:50%;background:var(--y);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;color:#0A0A0F;flex-shrink:0}
+.client-bar-name{font-size:.84rem;font-weight:600;flex:1}
+.client-bar-edit{background:none;border:none;color:var(--tm);cursor:pointer;font-size:.76rem;font-family:var(--fb)}
+@media(max-width:768px){.hdr{padding:.7rem .8rem}.sidebar{display:none}.hamburger{display:block}.inner{padding:20px 14px 60px}.pj-title{font-size:1.25rem}.gantt-label{width:90px;font-size:.7rem}.fr{grid-template-columns:1fr}.pj-dates{flex-direction:column;gap:4px}.brand{font-size:.82rem}.modal{padding:20px 16px;border-radius:12px}.tab{padding:10px 12px;font-size:.78rem}.card{padding:16px}.tl-media img,.tl-media video{max-height:180px}.share-box{flex-direction:column;align-items:stretch}}
+@media(max-width:380px){.pj-title{font-size:1.1rem}}
+</style>
+</head>
+<body>
+<div id="app"><div class="loading"><div class="spinner"></div>Loading...</div></div>
+<script>
+firebase.initializeApp({apiKey:"AIzaSyCHolstBzyXS__S6q7xeRtk2GxJ4zud0ms",authDomain:"dami-portal.firebaseapp.com",projectId:"dami-portal",storageBucket:"dami-portal.firebasestorage.app",messagingSenderId:"935546461",appId:"1:935546461:web:84d213cfd58569cf4747b4"});
+const auth=firebase.auth(),db=firebase.firestore(),storage=firebase.storage();
+const $=s=>document.querySelector(s),$$=s=>document.querySelectorAll(s);
+const escH=s=>{const d=document.createElement('div');d.textContent=s;return d.innerHTML};
+const fmtDate=d=>{if(!d)return"\u2014";return new Date(d+"T00:00:00").toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"})};
+const daysBetween=(a,b)=>Math.max(1,Math.round((new Date(b)-new Date(a))/86400000));
+const clampV=(v,lo,hi)=>Math.max(lo,Math.min(hi,v));
+const slugify=s=>s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
+const genId=()=>'id'+Date.now()+Math.random().toString(36).slice(2,7);
+const sColor=s=>s==='completed'?'#00D4AA':s==='in-progress'?'#FBBF24':'#8888A0';
+const sLabel=s=>s==='completed'?'Complete':s==='in-progress'?'In Progress':'Upcoming';
+const sIcon=s=>s==='completed'?'\u2713':s==='in-progress'?'\u25D0':'\u25CB';
+function getProgress(ph){if(!ph||!ph.length)return 0;const t=ph.reduce((s,p)=>s+(p.weight||0),0),d=ph.filter(p=>p.status==='completed').reduce((s,p)=>s+(p.weight||0),0),ip=ph.filter(p=>p.status==='in-progress').reduce((s,p)=>s+(p.weight||0)*.5,0);return t?Math.round(((d+ip)/t)*100):0}
+const badgeH=s=>{const bg=s==='completed'?'rgba(0,212,170,.12)':s==='in-progress'?'rgba(251,191,36,.12)':'rgba(136,136,160,.1)';return`<span class="badge" style="background:${bg};color:${sColor(s)}">${sIcon(s)} ${sLabel(s)}</span>`};
+const progH=pct=>`<div class="prog-sec anim"><div class="prog-top"><span class="prog-label">Overall Progress</span><span class="prog-pct">${pct}%</span></div><div class="prog-track"><div class="prog-fill" style="width:${pct}%"></div></div></div>`;
+
+let state={user:null,projects:[],activeId:null,tab:'updates',view:'loading',clientProject:null,unsub:null,mobileOpen:false,clientName:localStorage.getItem('portal-client-name')||''};
+const getUrlP=()=>new URLSearchParams(window.location.search).get('project');
+const getShareUrl=p=>location.origin+location.pathname+'?project='+slugify(p.title+'-'+p.id.slice(-4));
+
+// Firebase ops
+function listenProjects(){if(state.unsub)state.unsub();state.unsub=db.collection('projects').orderBy('createdAt','desc').onSnapshot(snap=>{state.projects=snap.docs.map(d=>({id:d.id,...d.data()}));if(!state.activeId&&state.projects.length)state.activeId=state.projects[0].id;render()})}
+async function saveProject(d){if(d.id&&!d._isNew){const{id,...r}=d;await db.collection('projects').doc(id).update(r)}else{delete d._isNew;delete d.id;d.createdAt=firebase.firestore.FieldValue.serverTimestamp();const ref=await db.collection('projects').add(d);state.activeId=ref.id}}
+async function deleteProject(id){await db.collection('projects').doc(id).delete();if(state.activeId===id)state.activeId=state.projects.filter(p=>p.id!==id)[0]?.id||null}
+async function loadProjectBySlug(slug){const snap=await db.collection('projects').get();for(const doc of snap.docs){const p={id:doc.id,...doc.data()};if(slugify(p.title+'-'+p.id.slice(-4))===slug)return p}return null}
+async function uploadFile(file,projId){const path=`updates/${projId}/${genId()}_${file.name}`;const ref=storage.ref(path);const snap=await ref.put(file);return await snap.ref.getDownloadURL()}
+function showLightbox(url,isVideo){const lb=document.createElement('div');lb.className='lightbox';lb.innerHTML=isVideo?`<video src="${url}" controls autoplay></video>`:`<img src="${url}">`;lb.onclick=()=>lb.remove();document.body.appendChild(lb)}
+
+// ═══ RENDER ═══
+function render(){const app=$('#app');switch(state.view){case'loading':app.innerHTML='<div class="loading"><div class="spinner"></div>Loading...</div>';break;case'login':renderLogin();break;case'admin':renderAdmin();break;case'client-gate':renderClientGate();break;case'client':renderClientView();break}}
+
+function renderLogin(){$('#app').innerHTML=`<div class="gate"><div class="gate-card"><div class="logo" style="margin:0 auto 20px;width:44px;height:44px;font-size:18px">D</div><div style="font-family:var(--fd);font-size:1.15rem;font-weight:700;margin-bottom:8px">Admin Login</div><div style="font-size:.86rem;color:var(--tm);margin-bottom:22px">Sign in to manage your projects</div><input class="gate-input" id="le" type="email" placeholder="Email"><input class="gate-input" id="lp" type="password" placeholder="Password"><button class="btn btn-a gate-btn" id="lb">Sign In</button><div id="lerr" class="gate-error" style="display:none"></div></div></div>`;$('#lb').onclick=async()=>{const e=$('#le').value.trim(),p=$('#lp').value;if(!e||!p)return;try{$('#lb').textContent='Signing in...';await auth.signInWithEmailAndPassword(e,p)}catch(er){$('#lerr').style.display='block';$('#lerr').textContent='Invalid email or password';$('#lb').textContent='Sign In'}};$('#lp').onkeydown=e=>{if(e.key==='Enter')$('#lb').click()}}
+
+function renderClientGate(){const p=state.clientProject;if(!p)return;if(!p.password){state.view='client';render();return}$('#app').innerHTML=`<div class="gate"><div class="gate-card"><div class="logo" style="margin:0 auto 20px;width:44px;height:44px;font-size:18px">D</div><div style="font-family:var(--fd);font-size:1.15rem;font-weight:700;margin-bottom:8px">${escH(p.title)}</div><div style="font-size:.86rem;color:var(--tm);margin-bottom:22px">Enter the project password</div><input class="gate-input" id="gp" type="password" placeholder="Project password"><button class="btn btn-a gate-btn" id="gb">View Project</button><div id="gerr" class="gate-error" style="display:none"></div></div></div>`;$('#gb').onclick=()=>{if($('#gp').value===p.password){state.view='client';render()}else{$('#gerr').style.display='block';$('#gerr').textContent='Incorrect password.'}};$('#gp').onkeydown=e=>{if(e.key==='Enter')$('#gb').click()}}
+
+// ═══ COMMENTS & REACTIONS HTML ═══
+function commentsH(items,parentType,parentId,projId,isAdmin){
+  const list=(items||[]).map(c=>{
+    const avatarCls=c.role==='admin'?'admin':'client';
+    const initial=(c.author||'?')[0].toUpperCase();
+    return`<div class="comment"><div class="comment-avatar ${avatarCls}">${initial}</div><div class="comment-content"><div class="comment-meta"><strong>${escH(c.author||'Unknown')}</strong> &middot; ${fmtDate(c.date)}</div><div class="comment-text">${escH(c.text)}</div></div></div>`;
+  }).join('');
+  const count=(items||[]).length;
+  return`<div class="comments-section"><button class="toggle-comments" data-type="${parentType}" data-id="${parentId}">\uD83D\uDCAC ${count} comment${count!==1?'s':''} &mdash; ${count?'view':'add a comment'}</button><div class="comments-body" data-for="${parentType}-${parentId}" style="display:none">${list}<div class="comment-input-row"><input class="comment-input" data-type="${parentType}" data-id="${parentId}" data-proj="${projId}" placeholder="Write a comment..."><button class="comment-send" data-type="${parentType}" data-id="${parentId}" data-proj="${projId}">Send</button></div></div></div>`;
+}
+
+function reactionsH(reactions,updateId,projId){
+  const r=reactions||{};
+  const emojis=[['thumbsUp','\uD83D\uDC4D'],['heart','\u2764\uFE0F'],['celebrate','\uD83C\uDF89']];
+  let h='<div class="reactions">';
+  emojis.forEach(([key,emoji])=>{
+    const count=r[key]||0;
+    h+=`<button class="react-btn ${count>0?'active':''}" data-emoji="${key}" data-uid="${updateId}" data-proj="${projId}">${emoji}${count>0?' '+count:''}</button>`;
+  });
+  h+='</div>';
+  return h;
+}
+
+function changeReqsH(phase,projId,isAdmin){
+  const reqs=phase.changeRequests||[];
+  if(!reqs.length)return'';
+  return reqs.map(cr=>{
+    let actions='';
+    if(cr.status==='pending'&&isAdmin){
+      actions=`<div class="change-req-actions"><button class="btn btn-a btn-s cr-resolve" data-phid="${phase.id}" data-crid="${cr.id}" data-proj="${projId}" data-action="resolved">\u2713 Resolved</button><button class="btn btn-g btn-s cr-resolve" data-phid="${phase.id}" data-crid="${cr.id}" data-proj="${projId}" data-action="noted">Noted</button></div>`;
+    } else if(cr.status!=='pending'){
+      actions=`<span style="font-size:.72rem;color:${cr.status==='resolved'?'var(--a)':'var(--tm)'}">${cr.status==='resolved'?'\u2713 Resolved':'\u2714 Noted'}</span>`;
+    }
+    return`<div class="change-req"><div class="change-req-title">\u270B Change Request</div><div class="change-req-text">${escH(cr.text)}</div><div class="change-req-meta">By ${escH(cr.author)} &middot; ${fmtDate(cr.date)}</div>${actions}</div>`;
+  }).join('');
+}
+
+// ═══ BIND INTERACTIVE ELEMENTS ═══
+function bindInteractions(projId,isAdmin){
+  // Toggle comments
+  $$('.toggle-comments').forEach(btn=>{
+    btn.onclick=()=>{const body=$(`[data-for="${btn.dataset.type}-${btn.dataset.id}"]`);if(body)body.style.display=body.style.display==='none'?'block':'none'}
+  });
+  // Send comment
+  $$('.comment-send').forEach(btn=>{
+    btn.onclick=async()=>{
+      const input=btn.previousElementSibling;const text=input.value.trim();if(!text)return;
+      const role=isAdmin?'admin':'client';const author=isAdmin?'Damilare':(state.clientName||'Client');
+      const comment={id:genId(),text,author,role,date:new Date().toISOString().slice(0,10)};
+      btn.textContent='...';
+      if(btn.dataset.type==='update'){
+        const proj=isAdmin?state.projects.find(p=>p.id===projId):state.clientProject;
+        const ups=[...(proj.updates||[])];const idx=ups.findIndex(u=>u.id===btn.dataset.id);
+        if(idx>=0){ups[idx].comments=[...(ups[idx].comments||[]),comment];await db.collection('projects').doc(projId).update({updates:ups});if(!isAdmin){state.clientProject.updates=ups;renderCTab()}else render()}
+      } else if(btn.dataset.type==='phase'){
+        const proj=isAdmin?state.projects.find(p=>p.id===projId):state.clientProject;
+        const phs=[...(proj.phases||[])];const idx=phs.findIndex(p=>p.id===btn.dataset.id);
+        if(idx>=0){phs[idx].comments=[...(phs[idx].comments||[]),comment];await db.collection('projects').doc(projId).update({phases:phs});if(!isAdmin){state.clientProject.phases=phs;renderCTab()}else render()}
+      }
+    }
+  });
+  // Reactions
+  $$('.react-btn').forEach(btn=>{
+    btn.onclick=async()=>{
+      const proj=isAdmin?state.projects.find(p=>p.id===projId):state.clientProject;
+      const ups=[...(proj.updates||[])];const idx=ups.findIndex(u=>u.id===btn.dataset.uid);
+      if(idx>=0){const r=ups[idx].reactions||{};r[btn.dataset.emoji]=(r[btn.dataset.emoji]||0)+1;ups[idx].reactions=r;await db.collection('projects').doc(projId).update({updates:ups});if(!isAdmin){state.clientProject.updates=ups;renderCTab()}else render()}
+    }
+  });
+  // Change request resolve
+  $$('.cr-resolve').forEach(btn=>{
+    btn.onclick=async()=>{
+      const proj=state.projects.find(p=>p.id===btn.dataset.proj);const phs=[...(proj.phases||[])];
+      const phIdx=phs.findIndex(p=>p.id===btn.dataset.phid);if(phIdx<0)return;
+      const reqs=[...(phs[phIdx].changeRequests||[])];const crIdx=reqs.findIndex(r=>r.id===btn.dataset.crid);
+      if(crIdx>=0){reqs[crIdx].status=btn.dataset.action;phs[phIdx].changeRequests=reqs;await db.collection('projects').doc(btn.dataset.proj).update({phases:phs});render()}
+    }
+  });
+  // Lightbox
+  $$('.tl-media img').forEach(img=>{img.onclick=e=>{e.stopPropagation();showLightbox(img.src,false)}});
+  $$('.tl-media video').forEach(v=>{v.onclick=e=>{e.stopPropagation();showLightbox(v.querySelector('source')?.src||v.src,true)}});
+}
+
+// ═══ HTML GENERATORS ═══
+function updatesH(proj,isAdmin){
+  const ups=[...(proj.updates||[])].sort((a,b)=>b.date.localeCompare(a.date)),pm=Object.fromEntries((proj.phases||[]).map(p=>[p.id,p.title]));
+  if(!ups.length)return`<div class="empty"><div class="empty-icon">\uD83D\uDCDD</div><div class="empty-t">No updates yet</div><div class="empty-s">${isAdmin?'Add progress updates for your client':'Updates will appear as work progresses'}</div>${isAdmin?'<button class="btn btn-a" id="btn-au">+ Add Update</button>':''}</div>`;
+  let h=isAdmin?'<div style="margin-bottom:14px;display:flex;justify-content:flex-end"><button class="btn btn-a btn-s" id="btn-au">+ Add Update</button></div>':'';
+  h+='<div class="timeline">';
+  ups.forEach((u,i)=>{
+    let media='';if(u.files&&u.files.length){media='<div class="tl-media">';u.files.forEach(f=>{if(f.type&&f.type.startsWith('video'))media+=`<video style="height:120px;border-radius:8px;border:1px solid var(--bd)" preload="metadata"><source src="${f.url}" type="${f.type}"></video>`;else media+=`<img src="${f.url}" style="height:120px">`});media+='</div>'}
+    h+=`<div class="tl-item anim" style="animation-delay:${i*.04}s"><div class="tl-dot" style="border-color:#00D4AA;background:#00D4AA;color:#0A0A0F">\u2713</div><div class="tl-date">${fmtDate(u.date)}</div><div class="tl-title">${escH(u.title)}</div><div class="tl-body">${escH(u.description)}</div>${media}${u.phase&&pm[u.phase]?`<div class="tl-tag">\u26A1 ${escH(pm[u.phase])}</div>`:''}${reactionsH(u.reactions,u.id,proj.id)}${commentsH(u.comments,'update',u.id,proj.id,isAdmin)}</div>`;
+  });
+  h+='</div>';return h;
+}
+
+function phasesH(proj,isAdmin){
+  const ph=proj.phases||[];if(!ph.length)return`<div class="empty"><div class="empty-icon">\uD83D\uDCCB</div><div class="empty-t">No phases yet</div><div class="empty-s">Add project phases to break down the work</div>${isAdmin?'<button class="btn btn-a" id="btn-ap">+ Add Phase</button>':''}</div>`;
+  let h=isAdmin?'<div style="margin-bottom:14px;display:flex;justify-content:flex-end"><button class="btn btn-a btn-s" id="btn-ap">+ Add Phase</button></div>':'';
+  ph.forEach((x,i)=>{
+    const reqBtn=!isAdmin?`<button class="btn btn-y btn-s phase-req-change" data-phid="${x.id}" data-proj="${proj.id}" style="margin-top:10px">\u270B Request Change</button>`:'';
+    h+=`<div class="card anim" style="animation-delay:${i*.04}s" data-phid="${x.id}"><div class="card-top"><div class="card-title">${escH(x.title)}</div>${badgeH(x.status)}</div><div class="card-body">${escH(x.description)}</div>${x.impact?`<div class="card-impact"><div class="impact-label">Why This Matters</div><div class="impact-text">${escH(x.impact)}</div></div>`:''}<div class="card-date">\uD83D\uDCC5 ${fmtDate(x.startDate)} \u2192 ${fmtDate(x.endDate)}<span style="margin-left:auto">Weight: ${x.weight}%</span></div>${changeReqsH(x,proj.id,isAdmin)}${reqBtn}${commentsH(x.comments,'phase',x.id,proj.id,isAdmin)}</div>`;
+  });
+  return h;
+}
+
+// ═══ TIMELINE FIX: Include project start/end dates in range ═══
+function timelineH(proj){
+  const ph=proj.phases||[];if(!ph.length)return'<div class="empty"><div class="empty-icon">\uD83D\uDCCA</div><div class="empty-t">No timeline data</div></div>';
+  // Include project dates AND phase dates for full range
+  const ds=[proj.startDate,proj.endDate,...ph.flatMap(x=>[x.startDate,x.endDate])].filter(Boolean);
+  if(ds.length<2)return'';
+  const mn=ds.reduce((a,b)=>a<b?a:b),mx=ds.reduce((a,b)=>a>b?a:b);
+  const sp=daysBetween(mn,mx),today=new Date().toISOString().slice(0,10),tp=clampV(daysBetween(mn,today)/sp*100,0,100);
+  let h=`<div class="anim"><div style="display:flex;justify-content:space-between;font-size:.7rem;color:var(--tm);margin-bottom:12px"><span>${fmtDate(mn)}</span><span>Today</span><span>${fmtDate(mx)}</span></div><div style="position:relative;margin-bottom:24px"><div style="position:absolute;left:${tp}%;top:-4px;bottom:-4px;width:2px;background:var(--a);opacity:.5;z-index:1"></div>`;
+  ph.forEach((x,i)=>{const l=clampV(daysBetween(mn,x.startDate)/sp*100,0,100),w=clampV(daysBetween(x.startDate,x.endDate)/sp*100,2,100-l);h+=`<div class="gantt-row anim" style="animation-delay:${i*.04}s"><div class="gantt-label">${escH(x.title)}</div><div class="gantt-track"><div class="gantt-bar" style="left:${l}%;width:${w}%;background:${sColor(x.status)};opacity:${x.status==='upcoming'?.4:1}">${w>8?x.weight+'%':''}</div></div></div>`});
+  h+='</div><div style="display:flex;gap:14px;justify-content:center;font-size:.74rem;flex-wrap:wrap">';
+  [['completed','Complete'],['in-progress','In Progress'],['upcoming','Upcoming']].forEach(([s,l])=>{h+=`<div style="display:flex;align-items:center;gap:5px"><div style="width:10px;height:10px;border-radius:3px;background:${sColor(s)};opacity:${s==='upcoming'?.4:1}"></div><span style="color:var(--tm)">${l}</span></div>`});
+  h+='</div></div>';return h;
+}
+
+function extBannerH(proj,isAdmin){const ext=proj.extensionRequest;if(!ext||ext.dismissed)return'';const st=ext.status||'pending';let title='',actions='',close='';if(st==='pending'){title='\u23F0 Deadline Extension Requested';actions=isAdmin?'<span style="font-size:.78rem;color:var(--y)">Waiting for client response...</span>':`<button class="btn btn-a btn-s" id="ext-accept">Accept</button><button class="btn btn-d btn-s" id="ext-reject">Decline</button>`}else{title=st==='accepted'?'\u2713 Extension Accepted':'\u2717 Extension Declined';close='<button class="ext-close" id="ext-dismiss">&times;</button>';actions=''}return`<div class="ext-banner ${st} anim">${close}<div class="ext-banner-title">${title}</div><div class="ext-banner-body"><strong>New deadline:</strong> ${fmtDate(ext.newDate)}<br><strong>Reason:</strong> ${escH(ext.reason)}</div><div style="display:flex;gap:8px;flex-wrap:wrap">${actions}</div></div>`}
+
+// ═══ CLIENT VIEW ═══
+function clientNameBarH(){
+  if(!state.clientName)return`<div class="client-bar"><div style="flex:1;text-align:center"><input class="fi" id="client-name-input" placeholder="Enter your name to comment..." style="text-align:center"><button class="btn btn-a btn-s" id="client-name-save" style="margin-top:8px;width:100%">Continue</button></div></div>`;
+  const initial=state.clientName[0].toUpperCase();
+  return`<div class="client-bar"><div class="client-bar-avatar">${initial}</div><div class="client-bar-name">Viewing as <strong>${escH(state.clientName)}</strong></div><button class="client-bar-edit" id="client-name-change">Change</button></div>`;
+}
+
+function renderClientView(){
+  const p=state.clientProject;if(!p)return;const pct=getProgress(p.phases||[]);
+  $('#app').innerHTML=`<div class="hdr"><div class="hdr-l"><div class="logo">D</div><div class="brand"><span>Dami</span> Market</div></div><div class="hdr-r"><button class="btn btn-g btn-s" id="btn-refresh">\u21BB Refresh</button></div></div><div style="max-width:900px;margin:0 auto;padding:28px 20px 60px">${clientNameBarH()}<div class="anim" style="margin-bottom:28px"><div class="pj-badge" style="background:${p.status==='completed'?'rgba(0,212,170,.12)':'rgba(251,191,36,.12)'};color:${sColor(p.status)}">${sIcon(p.status)} ${sLabel(p.status)}</div><div class="pj-title">${escH(p.title)}</div><div class="pj-client">For ${escH(p.clientName)}</div><div class="pj-desc">${escH(p.description||'')}</div><div class="pj-dates"><span>Started: <strong>${fmtDate(p.startDate)}</strong></span><span>Deadline: <strong>${fmtDate(p.endDate)}</strong></span></div></div>${extBannerH(p,false)}${progH(pct)}<div class="tabs" id="ctabs"><button class="tab active" data-tab="updates">Activity Log</button><button class="tab" data-tab="phases">Project Phases</button><button class="tab" data-tab="timeline">Timeline</button></div><div id="ccont"></div><div class="footer">Built with precision by <strong>Dami Market</strong> &mdash; &copy; ${new Date().getFullYear()}</div></div>`;
+  // Client name input
+  if($('#client-name-save'))$('#client-name-save').onclick=()=>{const n=$('#client-name-input').value.trim();if(n){state.clientName=n;localStorage.setItem('portal-client-name',n);renderClientView()}};
+  if($('#client-name-change'))$('#client-name-change').onclick=()=>{state.clientName='';localStorage.removeItem('portal-client-name');renderClientView()};
+  // Refresh
+  $('#btn-refresh').onclick=async()=>{$('#btn-refresh').textContent='\u21BB ...';const slug=getUrlP();if(slug){const fresh=await loadProjectBySlug(slug);if(fresh){state.clientProject=fresh;renderClientView()}}};
+  // Extension
+  if($('#ext-accept'))$('#ext-accept').onclick=async()=>{const ext={...p.extensionRequest,status:'accepted'};const phs=[...(p.phases||[])];if(phs.length)phs[phs.length-1].endDate=ext.newDate;await db.collection('projects').doc(p.id).update({extensionRequest:ext,endDate:ext.newDate,phases:phs});p.extensionRequest=ext;p.endDate=ext.newDate;p.phases=phs;renderClientView()};
+  if($('#ext-reject'))$('#ext-reject').onclick=async()=>{const ext={...p.extensionRequest,status:'rejected'};await db.collection('projects').doc(p.id).update({extensionRequest:ext});p.extensionRequest=ext;renderClientView()};
+  if($('#ext-dismiss'))$('#ext-dismiss').onclick=async()=>{const ext={...p.extensionRequest,dismissed:true};await db.collection('projects').doc(p.id).update({extensionRequest:ext});p.extensionRequest=ext;renderClientView()};
+  state.tab='updates';renderCTab();
+  $$('#ctabs .tab').forEach(t=>{t.onclick=()=>{$$('#ctabs .tab').forEach(x=>x.classList.remove('active'));t.classList.add('active');state.tab=t.dataset.tab;renderCTab()}});
+}
+
+function renderCTab(){
+  const p=state.clientProject,c=$('#ccont');if(!c)return;
+  if(state.tab==='updates')c.innerHTML=updatesH(p,false);
+  else if(state.tab==='phases')c.innerHTML=phasesH(p,false);
+  else c.innerHTML=timelineH(p);
+  bindInteractions(p.id,false);
+  // Bind "Request Change" buttons for client
+  $$('.phase-req-change').forEach(btn=>{
+    btn.onclick=()=>{
+      if(!state.clientName){alert('Please enter your name first.');return}
+      showModal('Request a Change',`<div class="fg"><label class="fl">What would you like changed?</label><textarea class="fi" id="cr-text" placeholder="Describe the change you'd like to see..." style="min-height:100px"></textarea></div>`,async ov=>{
+        const text=ov.querySelector('#cr-text').value.trim();if(!text)return;
+        const phs=[...(state.clientProject.phases||[])];const idx=phs.findIndex(x=>x.id===btn.dataset.phid);
+        if(idx>=0){const cr={id:genId(),text,author:state.clientName,date:new Date().toISOString().slice(0,10),status:'pending'};phs[idx].changeRequests=[...(phs[idx].changeRequests||[]),cr];await db.collection('projects').doc(btn.dataset.proj).update({phases:phs});state.clientProject.phases=phs;renderCTab()}
+        ov.remove();
+      },'Submit Request');
+    }
+  });
+}
+
+// ═══ ADMIN VIEW ═══
+function renderAdmin(){
+  const proj=state.projects.find(p=>p.id===state.activeId);let sb='';
+  state.projects.forEach(p=>{const pp=getProgress(p.phases||[]);sb+=`<div class="pi ${state.activeId===p.id?'active':''}" data-id="${p.id}"><div class="pi-title">${escH(p.title)}</div><div class="pi-client">${escH(p.clientName)}</div><div class="pi-bar"><div class="pi-fill" style="width:${pp}%"></div></div><div class="pi-meta"><div class="pi-pct">${pp}%</div><div class="dot-status"><span class="dot" style="background:${sColor(p.status)}"></span>${sLabel(p.status)}</div></div></div>`});
+  let mc='';
+  if(proj){const pct=getProgress(proj.phases||[]),su=getShareUrl(proj);
+  // Count pending change requests
+  const pendingCRs=(proj.phases||[]).reduce((s,ph)=>s+(ph.changeRequests||[]).filter(r=>r.status==='pending').length,0);
+  const crBadge=pendingCRs?`<span style="background:var(--yd);color:var(--y);padding:2px 8px;border-radius:10px;font-size:.7rem;font-weight:700;margin-left:6px">${pendingCRs} change req${pendingCRs>1?'s':''}</span>`:'';
+  mc=`<div class="inner"><div class="anim" style="margin-bottom:28px"><div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px"><div class="pj-badge" style="background:${proj.status==='completed'?'rgba(0,212,170,.12)':proj.status==='in-progress'?'rgba(251,191,36,.12)':'rgba(136,136,160,.1)'};color:${sColor(proj.status)}">${sIcon(proj.status)} ${sLabel(proj.status)}${crBadge}</div><div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn btn-y btn-s" id="btn-ext">\u23F0 Extension</button><button class="btn btn-g btn-s" id="btn-ed">\u270F\uFE0F Edit</button><button class="btn btn-d btn-s" id="btn-del">\uD83D\uDDD1</button></div></div><div class="pj-title">${escH(proj.title)}</div><div class="pj-client">Client: ${escH(proj.clientName)}</div><div class="pj-desc">${escH(proj.description||'')}</div><div class="pj-dates"><span>Start: <strong>${fmtDate(proj.startDate)}</strong></span><span>Deadline: <strong>${fmtDate(proj.endDate)}</strong></span>${proj.password?'<span style="color:var(--a);font-size:.76rem">\uD83D\uDD12 Protected</span>':''}</div><div style="margin-top:14px"><label class="fl">Client Share Link</label><div class="share-box"><input readonly value="${su}" id="surl"><button class="btn btn-a btn-s" id="btn-cp">Copy</button></div><div id="cpmsg" class="copied" style="display:none">Copied!</div></div></div>${extBannerH(proj,true)}${progH(pct)}<div class="tabs" id="atabs"><button class="tab ${state.tab==='updates'?'active':''}" data-tab="updates">Activity Log</button><button class="tab ${state.tab==='phases'?'active':''}" data-tab="phases">Project Phases${pendingCRs?' \u2022':''}</button><button class="tab ${state.tab==='timeline'?'active':''}" data-tab="timeline">Timeline</button></div><div id="acont"></div><div class="footer">Built with precision by <strong>Dami Market</strong> &mdash; &copy; ${new Date().getFullYear()}</div></div>`}
+  else mc=`<div class="inner"><div class="empty"><div class="empty-icon">\uD83D\uDE80</div><div class="empty-t">Welcome to Dami Market Project Portal</div><div class="empty-s">Create your first project</div><button class="btn btn-a" id="btn-ne">+ Create Project</button></div></div>`;
+  $('#app').innerHTML=`<div class="hdr"><div class="hdr-l"><button class="hamburger" id="ham"><span></span><span></span><span></span></button><div class="logo">D</div><div class="brand"><span>Dami</span> Market</div></div><div class="hdr-r"><button class="btn btn-g btn-s" id="btn-lo">Logout</button><button class="btn btn-a btn-s" id="btn-np">+ New</button></div></div><div class="mobile-drawer" id="mdrawer">${sb}</div><div class="layout"><div class="sidebar"><div class="sb-hdr"><div class="sb-title">Projects (${state.projects.length})</div></div><div class="sb-list">${sb}</div></div><div class="main">${mc}</div></div>`;
+  $('#btn-lo').onclick=()=>auth.signOut();$('#btn-np').onclick=()=>showProjectModal();if($('#btn-ne'))$('#btn-ne').onclick=()=>showProjectModal();
+  $('#ham').onclick=()=>{state.mobileOpen=!state.mobileOpen;$('#mdrawer').classList.toggle('open',state.mobileOpen)};
+  $$('.pi').forEach(it=>{it.onclick=()=>{state.activeId=it.dataset.id;state.tab='updates';state.mobileOpen=false;if($('#mdrawer'))$('#mdrawer').classList.remove('open');render()}});
+  if(proj){
+    $('#btn-ed').onclick=()=>showProjectModal(proj);$('#btn-del').onclick=async()=>{if(confirm('Delete?'))await deleteProject(proj.id)};
+    $('#btn-cp').onclick=()=>{navigator.clipboard.writeText($('#surl').value);$('#cpmsg').style.display='block';setTimeout(()=>{if($('#cpmsg'))$('#cpmsg').style.display='none'},2000)};
+    $('#btn-ext').onclick=()=>showExtModal(proj);
+    if($('#ext-dismiss'))$('#ext-dismiss').onclick=async()=>{await db.collection('projects').doc(proj.id).update({extensionRequest:{...proj.extensionRequest,dismissed:true}})};
+    renderATab();$$('#atabs .tab').forEach(t=>{t.onclick=()=>{$$('#atabs .tab').forEach(x=>x.classList.remove('active'));t.classList.add('active');state.tab=t.dataset.tab;renderATab()}});
+  }
+}
+
+function renderATab(){
+  const proj=state.projects.find(p=>p.id===state.activeId),c=$('#acont');if(!c||!proj)return;
+  if(state.tab==='updates'){c.innerHTML=updatesH(proj,true);if($('#btn-au'))$('#btn-au').onclick=()=>showUpdateModal(proj)}
+  else if(state.tab==='phases'){c.innerHTML=phasesH(proj,true);if($('#btn-ap'))$('#btn-ap').onclick=()=>showPhaseModal(proj);$$('.card[data-phid]').forEach(cd=>{cd.style.cursor='pointer';cd.onclick=e=>{if(e.target.closest('.comment-input-row')||e.target.closest('.toggle-comments')||e.target.closest('.comments-body')||e.target.closest('.cr-resolve')||e.target.closest('.change-req'))return;const ph=proj.phases.find(p=>p.id===cd.dataset.phid);if(ph)showPhaseModal(proj,ph)}})}
+  else c.innerHTML=timelineH(proj);
+  bindInteractions(proj.id,true);
+}
+
+// ═══ MODALS ═══
+function showModal(title,body,onSave,saveLabel){const ov=document.createElement('div');ov.className='overlay';ov.innerHTML=`<div class="modal"><div class="modal-title">${title}</div>${body}<div class="fa"><button class="btn btn-g btn-s" id="mc">Cancel</button><button class="btn btn-a btn-s" id="ms">${saveLabel||'Save'}</button></div></div>`;document.body.appendChild(ov);ov.onclick=e=>{if(e.target===ov)ov.remove()};ov.querySelector('#mc').onclick=()=>ov.remove();ov.querySelector('#ms').onclick=()=>onSave(ov);return ov}
+
+function showProjectModal(proj){const p=proj||{};showModal(proj?'Edit Project':'New Project',`<div class="fg"><label class="fl">Client Name</label><input class="fi" id="mc1" value="${escH(p.clientName||'')}"></div><div class="fg"><label class="fl">Project Title</label><input class="fi" id="mc2" value="${escH(p.title||'')}"></div><div class="fg"><label class="fl">Description</label><textarea class="fi" id="mc3">${escH(p.description||'')}</textarea></div><div class="fr"><div class="fg"><label class="fl">Start</label><input type="date" class="fi" id="mc4" value="${p.startDate||''}"></div><div class="fg"><label class="fl">End</label><input type="date" class="fi" id="mc5" value="${p.endDate||''}"></div></div><div class="fr"><div class="fg"><label class="fl">Status</label><select class="fi" id="mc6"><option value="in-progress" ${p.status==='in-progress'?'selected':''}>In Progress</option><option value="completed" ${p.status==='completed'?'selected':''}>Completed</option><option value="upcoming" ${p.status==='upcoming'?'selected':''}>Upcoming</option></select></div><div class="fg"><label class="fl">Client Password</label><input class="fi" id="mc7" value="${p.password||''}" placeholder="Optional"></div></div>`,async ov=>{const d={clientName:ov.querySelector('#mc1').value.trim(),title:ov.querySelector('#mc2').value.trim(),description:ov.querySelector('#mc3').value.trim(),startDate:ov.querySelector('#mc4').value,endDate:ov.querySelector('#mc5').value,status:ov.querySelector('#mc6').value,password:ov.querySelector('#mc7').value,phases:p.phases||[],updates:p.updates||[],extensionRequest:p.extensionRequest||null};if(!d.clientName||!d.title)return;if(proj)d.id=proj.id;else d._isNew=true;await saveProject(d);ov.remove()})}
+
+function showPhaseModal(proj,phase){const p=phase||{};showModal(phase?'Edit Phase':'Add Phase',`<div class="fg"><label class="fl">Phase Title</label><input class="fi" id="mp1" value="${escH(p.title||'')}"></div><div class="fg"><label class="fl">Description</label><textarea class="fi" id="mp2">${escH(p.description||'')}</textarea></div><div class="fg"><label class="fl">Impact</label><textarea class="fi" id="mp3">${escH(p.impact||'')}</textarea></div><div class="fr"><div class="fg"><label class="fl">Status</label><select class="fi" id="mp4"><option value="upcoming" ${p.status==='upcoming'?'selected':''}>Upcoming</option><option value="in-progress" ${p.status==='in-progress'?'selected':''}>In Progress</option><option value="completed" ${p.status==='completed'?'selected':''}>Completed</option></select></div><div class="fg"><label class="fl">Weight (%)</label><input type="number" class="fi" id="mp5" value="${p.weight||15}"></div></div><div class="fr"><div class="fg"><label class="fl">Start</label><input type="date" class="fi" id="mp6" value="${p.startDate||''}"></div><div class="fg"><label class="fl">End</label><input type="date" class="fi" id="mp7" value="${p.endDate||''}"></div></div>`,async ov=>{const d={id:p.id||genId(),title:ov.querySelector('#mp1').value.trim(),description:ov.querySelector('#mp2').value.trim(),impact:ov.querySelector('#mp3').value.trim(),status:ov.querySelector('#mp4').value,weight:parseInt(ov.querySelector('#mp5').value)||15,startDate:ov.querySelector('#mp6').value,endDate:ov.querySelector('#mp7').value,comments:p.comments||[],changeRequests:p.changeRequests||[]};if(!d.title)return;const phs=[...(proj.phases||[])];const idx=phs.findIndex(x=>x.id===d.id);if(idx>=0)phs[idx]=d;else phs.push(d);await db.collection('projects').doc(proj.id).update({phases:phs});ov.remove()})}
+
+function showUpdateModal(proj){const phs=proj.phases||[];let opts=phs.map(p=>`<option value="${p.id}">${escH(p.title)}</option>`).join('');
+const ov=showModal('Add Progress Update',`<div class="fr"><div class="fg"><label class="fl">Date</label><input type="date" class="fi" id="mu1" value="${new Date().toISOString().slice(0,10)}"></div><div class="fg"><label class="fl">Phase</label><select class="fi" id="mu2">${opts}</select></div></div><div class="fg"><label class="fl">Title</label><input class="fi" id="mu3"></div><div class="fg"><label class="fl">Description</label><textarea class="fi" id="mu4" style="min-height:100px"></textarea></div><div class="fg"><label class="fl">Attach Files</label><div class="file-upload" id="fu"><div style="font-size:.82rem;color:var(--tm)">Drop files or <strong style="color:var(--a)">click to browse</strong></div><input type="file" id="fu-input" multiple accept="image/*,video/*"></div><div class="file-preview" id="fu-preview"></div><div class="upload-progress" id="fu-prog" style="display:none"><div class="upload-progress-fill" id="fu-fill"></div></div></div>`,async ov=>{const title=ov.querySelector('#mu3').value.trim(),desc=ov.querySelector('#mu4').value.trim();if(!title||!desc)return;const btn=ov.querySelector('#ms');btn.textContent='Uploading...';btn.disabled=true;const files=Array.from(ov.querySelector('#fu-input').files||[]),uploaded=[];const prog=ov.querySelector('#fu-prog'),fill=ov.querySelector('#fu-fill');if(files.length){prog.style.display='block';for(let i=0;i<files.length;i++){fill.style.width=((i/files.length)*100)+'%';try{const url=await uploadFile(files[i],proj.id);uploaded.push({url,type:files[i].type,name:files[i].name})}catch(e){}}fill.style.width='100%'}const up={id:genId(),date:ov.querySelector('#mu1').value,title,description:desc,phase:ov.querySelector('#mu2').value,files:uploaded,comments:[],reactions:{}};await db.collection('projects').doc(proj.id).update({updates:[...(proj.updates||[]),up]});ov.remove()},'Save Update');
+const fuInput=ov.querySelector('#fu-input'),fuPrev=ov.querySelector('#fu-preview');fuInput.onchange=()=>{fuPrev.innerHTML='';Array.from(fuInput.files).forEach(f=>{if(f.type.startsWith('image')){const img=document.createElement('img');img.src=URL.createObjectURL(f);fuPrev.appendChild(img)}})}}
+
+function showExtModal(proj){showModal('Request Extension',`<div class="fg"><label class="fl">New Deadline</label><input type="date" class="fi" id="me1" value="${proj.endDate||''}"></div><div class="fg"><label class="fl">Reason</label><textarea class="fi" id="me2" style="min-height:100px"></textarea></div><div style="padding:12px;border-radius:8px;background:var(--yd);font-size:.82rem;color:var(--y);line-height:1.5">Your client will see this and can accept or decline.</div>`,async ov=>{const d=ov.querySelector('#me1').value,r=ov.querySelector('#me2').value.trim();if(!d||!r)return;await db.collection('projects').doc(proj.id).update({extensionRequest:{newDate:d,reason:r,status:'pending',requestedAt:new Date().toISOString()}});ov.remove()},'Send Request')}
+
+// ═══ INIT ═══
+const urlP=getUrlP();
+if(urlP){(async()=>{const p=await loadProjectBySlug(urlP);if(p){state.clientProject=p;state.view=p.password?'client-gate':'client'}else{state.view='client';state.clientProject={title:'Not Found',clientName:'',description:'This project link is invalid.',status:'upcoming',phases:[],updates:[],startDate:'',endDate:''}}render()})()}
+else{auth.onAuthStateChanged(u=>{state.user=u;if(u){state.view='admin';listenProjects()}else{state.view='login';if(state.unsub){state.unsub();state.unsub=null}state.projects=[];render()}})}
+</script>
+</body>
+</html>
