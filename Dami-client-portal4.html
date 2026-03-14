@@ -197,12 +197,13 @@ function reactionsH(reactions,updateId,projId,isAdmin){
   const r=reactions||{};// r = { thumbsUp: [{user:'name'},...], heart: [...], celebrate: [...] }
   const userId=isAdmin?'__admin__':getClientName();
   const emojis=[['thumbsUp','\uD83D\uDC4D'],['heart','\u2764\uFE0F'],['celebrate','\uD83C\uDF89']];
-  // Find which emoji this user currently has
+  // Normalize: old format was numbers, new format is arrays of {user}
+  const norm=k=>{const v=r[k];if(Array.isArray(v))return v;if(typeof v==='number'&&v>0)return Array.from({length:v},(_,i)=>({user:'anon'+i}));return[]};
   let currentEmoji=null;
-  emojis.forEach(([key])=>{if((r[key]||[]).some(x=>x.user===userId))currentEmoji=key});
+  emojis.forEach(([key])=>{if(norm(key).some(x=>x.user===userId))currentEmoji=key});
   let h='<div class="reactions">';
   emojis.forEach(([key,emoji])=>{
-    const count=(r[key]||[]).length;
+    const count=norm(key).length;
     const isActive=currentEmoji===key;
     h+=`<button class="react-btn ${isActive?'active':''}" data-emoji="${key}" data-uid="${updateId}" data-proj="${projId}">${emoji}${count>0?' '+count:''}</button>`;
   });
